@@ -8,13 +8,13 @@ import { Paper } from '@mui/material';
 import { useState } from 'react';
 
 const Voters = () => {
-    const rowsArr = [
+    const votersArr = [
         { id: 1, photo: "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?q=80&w=1480&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", voterName: "Abc", email: "abc@ves.ac.in", group: "FYMCA/A Boys", verified: true },
         { id: 2, photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", voterName: "Xyz", email: "xyz@ves.ac.in", group: "FYMCA/B Boys", verified: false },
 
     ];
 
-    const [voterRows, setVoterRows] = useState(rowsArr);
+    const [voterRows, setVoterRows] = useState(votersArr);
 
     const columns = [
         {
@@ -62,7 +62,7 @@ const Voters = () => {
                 return (
                     <IconButton
                         onClick={(e) => {
-                            const filteredRows = rowsArr.filter((ele) => ele !== params.row)
+                            const filteredRows = voterRows.filter((ele) => ele !== params.row)
                             setVoterRows(filteredRows)
                         }}
                         variant='plain'
