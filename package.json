@@ -1,6 +1,7 @@
 {
   "name": "vote",
   "version": "1.0.0",
+  "type": "module",
   "description": "blockchain voting website",
   "main": "index.js",
   "scripts": {
