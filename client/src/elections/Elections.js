@@ -8,12 +8,12 @@ import { GridDeleteIcon } from '@mui/x-data-grid';
 
 const Elections = () => {
 
-    const rowsArr = [
+    const electionsArr = [
         { id: 1, date: new Date("11-12-2023"), electionName: "SORT", candidates: "Prasad Gade, Prashant Gupta", group: "FYMCA/A BOYS", expires: new Date("December 23, 2023, 13:00:00"), status: "Completed" },
         { id: 2, date: new Date("12-12-2023"), electionName: "CR", candidates: "Radhika Gangan, Nikita Kundu", group: "FYMCA/A GIRLS", expires: new Date("December 24, 2023, 13:00:00"), status: "Pending" },
     ];
 
-    const [electionRows, setElectionRows] = useState(rowsArr);
+    const [electionRows, setElectionRows] = useState(electionsArr);
 
     const columns = [
         {
@@ -62,7 +62,7 @@ const Elections = () => {
                 return (
                     <IconButton
                         onClick={(e) => {
-                            const filteredRows = rowsArr.filter((ele) => ele !== params.row)
+                            const filteredRows = electionRows.filter((ele) => ele !== params.row)
                             setElectionRows(filteredRows)
                         }}
                         variant='plain'
