@@ -1,1 +1,2 @@
-# 23A09 Blockchain Voting Project
+# Vote
+Blockchain voting project
