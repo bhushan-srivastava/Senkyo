@@ -80,7 +80,7 @@ const Navbar = () => {
           </IconButton>
           <div className="navbar-drawer" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '64px', color: 'white', backgroundColor: '#012636' }}>
             {['About Us', 'Elections', 'Voters', 'Candidates', 'Login'].map((text, index) => (
-              <Button key={text} color="inherit" onClick={handleMenuClose} sx={{ mb: 2 }} href={text.toLowerCase()}>
+              <Button key={text} color="inherit" onClick={handleMenuClose} sx={{ mb: 2 }} href={"/admin/" + text.toLowerCase()}>
                 {text}
               </Button>
             ))}
