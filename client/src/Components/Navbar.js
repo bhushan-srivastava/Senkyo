@@ -20,11 +20,11 @@ const Navbar = () => {
 
   return (
     <div className='navbar'>
-      <AppBar position="static" sx={{ backgroundColor: 'White', color:'#012636' }}>
+      <AppBar position="static" sx={{ backgroundColor: 'White', color: '#012636' }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <div className='logo-container'>
-          <img className='logo' src='https://i.ibb.co/XZV4pmX/Ether-Ballot-removebg-preview.png' alt='logo'></img>
-            <Typography variant="h6" component="div"  sx={{ fontWeight:'bold',fontSize:'1.7rem'}}>   
+            <img className='logo' src='https://i.ibb.co/XZV4pmX/Ether-Ballot-removebg-preview.png' alt='logo'></img>
+            <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', fontSize: '1.7rem' }}>
               EtherBallot
             </Typography>
           </div>
@@ -47,10 +47,10 @@ const Navbar = () => {
                 <Button color="inherit" href='/admin/elections'>Elections</Button>
                 <Button color="inherit" href='/admin/voters'>Voters</Button>
                 <Button color="inherit" href='/'>Candidates</Button>
-                { !isLogin && <Button color="inherit" >Login</Button>}
-                { isLogin && <Button color="inherit">My Account</Button>}
+                {!isLogin && <Button color="inherit" >Login</Button>}
+                {isLogin && <Button color="inherit">My Account</Button>}
 
-                
+
               </>
             )}
           </div>
@@ -78,9 +78,9 @@ const Navbar = () => {
           >
             <CloseIcon />
           </IconButton>
-          <div className="navbar-drawer" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '64px',color:'white', backgroundColor:'#012636' }}>
-            {['About Us', 'Elections', 'Voters','Candidates','Login'].map((text, index) => (
-              <Button key={text} color="inherit" onClick={handleMenuClose} sx={{ mb: 2 }}>
+          <div className="navbar-drawer" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '64px', color: 'white', backgroundColor: '#012636' }}>
+            {['About Us', 'Elections', 'Voters', 'Candidates', 'Login'].map((text, index) => (
+              <Button key={text} color="inherit" onClick={handleMenuClose} sx={{ mb: 2 }} href={text.toLowerCase()}>
                 {text}
               </Button>
             ))}
