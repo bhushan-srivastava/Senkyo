@@ -4,6 +4,11 @@ import express from "express"
 import path from 'path'
 import { fileURLToPath } from 'url';
 
+import mongoose from "mongoose"
+
+
+import authRouter from "./routes/auth/auth.router.js"
+
 dotenv.config()
 
 const server = express();
@@ -24,6 +29,20 @@ server.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, './client/build/index.html'));
 });
 
-const port = process.env.PORT || 8080
+//handling routes
+server.use('/auth', authRouter);
 
-server.listen(port, () => { console.info(`listening on port ${port}`) })
+const port = process.env.PORT || 8090
+
+
+mongoose.set('strictQuery', true);
+// mongoose.connect(process.env.CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
+mongoose.connect(process.env.CONNECTION_STRING)
+
+    .then(() => {
+        console.log('Database is connected')
+        server.listen(port, () => { console.info(`listening on port ${port}`) })
+
+    })
+    .catch((err) => console.log("ERROR in Database connection: ", err))
+
