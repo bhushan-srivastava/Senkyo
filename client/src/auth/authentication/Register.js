@@ -10,11 +10,13 @@ import {
   Select,
   MenuItem,
   InputLabel,
-  Alert,
+
 } from "@mui/material";
 import Webcam from "react-webcam";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+
+
 
 const Register = () => {
   const [formData, setFormData] = React.useState({
@@ -64,7 +66,7 @@ const Register = () => {
 
     //Send a POST request
     axios
-      .post("/auth/register", formData)
+      .post(process.env.REACT_APP_BASE_SERVER_URL + "/auth/register", formData)
       .then(function (response) {
         if (response.data.success) {
           alert("User created successfullty");
@@ -79,6 +81,8 @@ const Register = () => {
       });
   };
 
+
+
   return (
     <Container
       sx={{
@@ -86,16 +90,15 @@ const Register = () => {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        bgcolor: "tomato",
       }}
     >
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="register-form">
         <FormControl
           sx={{
             width: {
               xs: "100vw",
               md: "50vw",
-              border: "1px solid black",
+              border: "1px solid white",
               padding: "50px 30px",
               borderRadius: "10px",
             },

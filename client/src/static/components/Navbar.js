@@ -47,7 +47,7 @@ const Navbar = () => {
                 <Button color="inherit" href='/admin/elections'>Elections</Button>
                 <Button color="inherit" href='/admin/voters'>Voters</Button>
                 <Button color="inherit" href='/'>Candidates</Button>
-                {!isLogin && <Button color="inherit" >Login</Button>}
+                {!isLogin && <Button color="inherit" href='/auth/login'>Login</Button>}
                 {isLogin && <Button color="inherit">My Account</Button>}
 
 
@@ -79,11 +79,22 @@ const Navbar = () => {
             <CloseIcon />
           </IconButton>
           <div className="navbar-drawer" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '64px', color: 'white', backgroundColor: '#012636' }}>
-            {['About Us', 'Elections', 'Voters', 'Candidates', 'Login'].map((text, index) => (
-              <Button key={text} color="inherit" onClick={handleMenuClose} sx={{ mb: 2 }} href={"/admin/" + text.toLowerCase()}>
-                {text}
-              </Button>
-            ))}
+            {["About Us", "Elections", "Voters", "Candidates"].map(
+              (text, index) => (
+                <Button
+                  key={text}
+                  color="inherit"
+                  onClick={handleMenuClose}
+                  sx={{ mb: 2 }}
+                  href={"/admin/" + text.toLowerCase()}
+                >
+                  {text}
+                </Button>
+              )
+            )}
+            <Button color="inherit" onClick={handleMenuClose} sx={{ mb: 2 }} href={"/auth/login"}>
+              Login
+            </Button>
           </div>
         </div>
       )}
