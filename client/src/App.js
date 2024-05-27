@@ -28,6 +28,7 @@ import MainRouter from "./MainRouter";
 import { CssVarsProvider as JoyCssVarsProvider } from '@mui/joy/styles';
 
 function App() {
+
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
   const materialTheme = materialExtendTheme(

@@ -9,8 +9,8 @@ import { GridDeleteIcon } from '@mui/x-data-grid';
 const Elections = () => {
 
     const electionsArr = [
-        { id: 1, date: new Date("11-12-2023"), electionName: "SORT", candidates: "Prasad Gade, Prashant Gupta", group: "FYMCA/A BOYS", expires: new Date("December 23, 2023, 13:00:00"), status: "Completed" },
-        { id: 2, date: new Date("12-12-2023"), electionName: "CR", candidates: "Radhika Gangan, Nikita Kundu", group: "FYMCA/A GIRLS", expires: new Date("December 24, 2023, 13:00:00"), status: "Pending" },
+        { id: 1, date: new Date("11-12-2023"), electionName: "SORT", candidates: "Prasad Gade, Prashant Gupta", group: "SYMCA/A BOYS", expires: new Date("December 23, 2023, 13:00:00"), status: "Completed" },
+        { id: 2, date: new Date("12-12-2023"), electionName: "CR", candidates: "Radhika Gangan, Nikita Kundu", group: "SYMCA/A GIRLS", expires: new Date("December 24, 2023, 13:00:00"), status: "Pending" },
     ];
 
     const [electionRows, setElectionRows] = useState(electionsArr);
@@ -40,7 +40,7 @@ const Elections = () => {
             width: 150,
             editable: true,
             type: "singleSelect",
-            valueOptions: ["FYMCA/A Boys", "FYMCA/A Girls", "FYMCA/B Boys", "FYMCA/B Girls"]
+            valueOptions: ["SYMCA/A Boys", "SYMCA/A Girls", "SYMCA/B Boys", "SYMCA/B Girls"]
         },
         {
             field: 'expires',
@@ -80,7 +80,7 @@ const Elections = () => {
 
         <Paper variant="outlined">
             <br />
-            <Typography level='h3' sx={{ marginLeft: '2vw' }}>
+            <Typography level='h3' sx={{ marginLeft: '2vw' }} color={"primary"}>
                 Admin: Elections Panel
             </Typography>
 

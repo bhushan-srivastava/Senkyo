@@ -5,13 +5,15 @@
 
 .navbar {
   height: 80px;
-  background-color: white;
+  position: relative;
+  top: 0;
+  z-index: 999;
 }
 
 .navbar-drawer {
-  height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   animation: 1s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 

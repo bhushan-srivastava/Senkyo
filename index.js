@@ -4,10 +4,13 @@ import express from "express"
 import path from 'path'
 import { fileURLToPath } from 'url';
 
+import cookieParser from "cookie-parser"
+
 import mongoose from "mongoose"
 
 
-import authRouter from "./routes/auth/auth.router.js"
+import authRouter from "./routers/auth/auth.router.js"
+import voterRouter from "./routers/voter/voter.router.js";
 
 dotenv.config()
 
@@ -15,24 +18,28 @@ const server = express();
 
 // middleware
 server.use(express.json());
-
+server.use(cookieParser());
 
 
 /* production client build folder */
-const __filename = fileURLToPath(import.meta.url);
+/* production client build folder */
+if (process.env.NODE_ENV === 'production') {
+    const __filename = fileURLToPath(import.meta.url);
 
-const __dirname = path.dirname(__filename);
+    const __dirname = path.dirname(__filename);
 
-server.use(express.static(path.join(__dirname, './client/build')))
+    server.use(express.static(path.join(__dirname, './client/build')))
 
-server.get('/*', function (req, res) {
-    res.sendFile(path.join(__dirname, './client/build/index.html'));
-});
+    server.get('/*', function (req, res) {
+        res.sendFile(path.join(__dirname, './client/build/index.html'));
+    });
+}
 
 //handling routes
-server.use('/auth', authRouter);
+server.use('/api/auth', authRouter);
+server.use('/api/voters', voterRouter);
 
-const port = process.env.PORT || 8090
+const port = process.env.PORT || 8080
 
 
 mongoose.set('strictQuery', true);

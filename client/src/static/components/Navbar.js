@@ -1,55 +1,119 @@
 // Navbar.js
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button, IconButton, useMediaQuery } from '@mui/material';
+import { AppBar, Toolbar, IconButton, useMediaQuery } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import CloseIcon from '@mui/icons-material/Close';
+import Link from '@mui/joy/Link';
+import Menu from '@mui/joy/Menu';
+import MenuButton from '@mui/joy/MenuButton';
+import MenuItem from '@mui/joy/MenuItem';
+import Dropdown from '@mui/joy/Dropdown';
+import Divider from '@mui/joy/Divider';
+import Chip from '@mui/joy/Chip';
+
+import logo from '../images/logo.png';
+
 import "./Navbar.css";
+
+
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = React.useState(false);
-  const [isLogin, setIsLogin] = React.useState(false);
   const isMobile = useMediaQuery('(max-width:1000px)');
 
-  const handleMenuOpen = () => {
-    setMenuOpen(true);
-  };
-
-  const handleMenuClose = () => {
-    setMenuOpen(false);
+  const handleMenuToggle = () => {
+    setMenuOpen(!menuOpen);
   };
 
   return (
+
     <div className='navbar'>
-      <AppBar position="static" sx={{ backgroundColor: 'White', color: '#012636' }}>
+      <AppBar sx={{
+        backgroundColor: 'transparent',
+        boxShadow: 'none',
+      }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <div className='logo-container'>
-            <img className='logo' src='https://i.ibb.co/XZV4pmX/Ether-Ballot-removebg-preview.png' alt='logo'></img>
-            <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', fontSize: '1.7rem' }}>
+            <img className='logo' src={logo} alt='logo' />
+            {/* <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', fontSize: '1.7rem' }}> */}
+            <Link
+              level="h6"
+              underline="none"
+              variant="plain"
+              sx={{ fontWeight: 'bold', fontSize: '1.7rem' }}
+              href='/'
+            >
+              {/* <img className='logo' src={logo} alt='logo'></img> */}
               EtherBallot
-            </Typography>
+            </Link>
+            {/* </Typography> */}
           </div>
           <div>
             {isMobile && (
               <IconButton
                 size="large"
                 edge="end"
-                color="inherit"
+                color="primary"
                 aria-label="menu"
                 sx={{ ml: 2 }}
-                onClick={handleMenuOpen}
+                onClick={handleMenuToggle}
               >
                 <MenuIcon />
               </IconButton>
             )}
             {!isMobile && (
               <>
-                <Button color="inherit" href='/'>About Us</Button>
-                <Button color="inherit" href='/admin/elections'>Elections</Button>
-                <Button color="inherit" href='/admin/voters'>Voters</Button>
-                <Button color="inherit" href='/'>Candidates</Button>
-                {!isLogin && <Button color="inherit" href='/auth/login'>Login</Button>}
-                {isLogin && <Button color="inherit">My Account</Button>}
 
+                <Dropdown>
+                  <MenuButton
+                    variant="plain"
+                    color="primary"
+                    size='lg'
+                  >
+                    Admin
+                  </MenuButton>
+
+                  <Menu>
+                    <MenuItem>
+                      <Link underline='none' href='/auth/admin/login'>Login</Link>
+                    </MenuItem>
+
+                    <MenuItem>
+                      <Link underline='none' href='/voters'>Voters</Link>
+                    </MenuItem>
+
+                    <MenuItem>
+                      <Link underline='none' href='/elections'>Elections</Link>
+                    </MenuItem>
+
+                  </Menu>
+
+                </Dropdown>
+
+                <Dropdown>
+                  <MenuButton
+                    variant="plain"
+                    color="primary"
+                    size='lg'
+                  >
+                    Voter
+                  </MenuButton>
+
+                  <Menu>
+                    <MenuItem>
+                      <Link underline='none' href='/auth/voter/register'>Register</Link>
+                    </MenuItem>
+
+                    <MenuItem>
+                      <Link underline='none' href='/auth/voter/login'>Login</Link>
+                    </MenuItem>
+
+                    <MenuItem>
+                      <Link underline='none' href='/elections'>Elections</Link>
+                    </MenuItem>
+
+                  </Menu>
+
+                </Dropdown>
 
               </>
             )}
@@ -57,47 +121,69 @@ const Navbar = () => {
         </Toolbar>
       </AppBar>
 
-      {isMobile && menuOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            backgroundColor: 'white',
-            zIndex: 999,
-          }}
-        >
-          <IconButton
-            color="inherit"
-            aria-label="close menu"
-            edge="end"
-            onClick={handleMenuClose}
-            sx={{ position: 'absolute', top: 0, right: 0, mt: 1, mr: 1 }}
+      {
+        isMobile && menuOpen && (
+          <div
+            style={{
+              position: 'relative',
+              // top: 0,
+              width: '100vw',
+              height: '100vh',
+              top: '50px',
+              left: 0,
+              paddingTop: '25px',
+              backgroundColor: 'Background',
+              color: 'primary'
+            }}
+
+            onClick={handleMenuToggle}
           >
-            <CloseIcon />
-          </IconButton>
-          <div className="navbar-drawer" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '64px', color: 'white', backgroundColor: '#012636' }}>
-            {["About Us", "Elections", "Voters", "Candidates"].map(
-              (text, index) => (
-                <Button
-                  key={text}
-                  color="inherit"
-                  onClick={handleMenuClose}
-                  sx={{ mb: 2 }}
-                  href={"/admin/" + text.toLowerCase()}
+
+            <div className="navbar-drawer">
+
+              <br />
+              <Divider>
+                <Chip
+                  color="primary"
+
+                  size="lg"
+                  variant="soft"
+                  sx={{ borderRadius: '6px' }}
                 >
-                  {text}
-                </Button>
-              )
-            )}
-            <Button color="inherit" onClick={handleMenuClose} sx={{ mb: 2 }} href={"/auth/login"}>
-              Login
-            </Button>
+                  Admin
+                </Chip>
+              </Divider>
+              <br />
+              <Link underline='none' variant="plain" href='/auth/admin/login'>Login</Link>
+              <br />
+              <Link underline='none' variant="plain" href='/voters'>Voters</Link>
+              <br />
+              <Link underline='none' variant="plain" href='/elections'>Elections</Link>
+              <br />
+              <br />
+              <Divider>
+                <Chip
+                  color="primary"
+
+                  size="lg"
+                  variant="soft"
+                  sx={{ borderRadius: '6px' }}
+                >
+                  Voter
+                </Chip>
+              </Divider>
+              <br />
+              <Link underline='none' variant="plain" href='/auth/voter/register'>Register</Link>
+              <br />
+              <Link underline='none' variant="plain" href='/auth/voter/login'>Login</Link>
+              <br />
+              <Link underline='none' variant="plain" href='/elections'>Elections</Link>
+              <br />
+
+            </div>
           </div>
-        </div>
-      )}
+        )
+      }
     </div>
   );
 };

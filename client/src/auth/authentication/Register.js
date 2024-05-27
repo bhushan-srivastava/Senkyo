@@ -10,13 +10,13 @@ import {
   Select,
   MenuItem,
   InputLabel,
-
+  Modal,
 } from "@mui/material";
 import Webcam from "react-webcam";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-
-
+import Loader from "../../static/components/Loader";
+import { message } from "antd";
 
 const Register = () => {
   const [formData, setFormData] = React.useState({
@@ -31,20 +31,28 @@ const Register = () => {
   const navigate = useNavigate();
 
   const videoConstraints = {
-    width: 320,
-    height: 400,
+    width: 700,
+    height: 700,
     facingMode: "user",
   };
 
   const webcamRef = React.useRef(null);
+  const webcamRefSecondary = React.useRef(null);
   const [imgSrc, setImgSrc] = React.useState(null);
   const [imgBtn, setImgBtn] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const capture = React.useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
     setImgSrc(imageSrc);
     setFormData((prevFormData) => ({ ...prevFormData, imgCode: imageSrc }));
-  }, [webcamRef, setImgSrc]);
+  }, [webcamRef]);
+
+  const captureSecondary = React.useCallback(() => {
+    const imageSrc = webcamRefSecondary.current.getScreenshot();
+    setImgSrc(imageSrc);
+    setFormData((prevFormData) => ({ ...prevFormData, imgCode: imageSrc }));
+  }, [webcamRefSecondary]);
 
   const handleImgBtn = () => {
     setImgBtn(true);
@@ -60,20 +68,39 @@ const Register = () => {
     e.preventDefault();
     //Image not captured
     if (formData.imgCode === "") {
-      alert("Please click a picture for future verification!");
+      message.warning("Please click a picture for future verification!");
       return;
     }
 
+    // Start loading
+    setIsLoading(true);
+
     //Send a POST request
     axios
-      .post(process.env.REACT_APP_BASE_SERVER_URL + "/auth/register", formData)
+      .post("/api/auth/voter/register", formData)
       .then(function (response) {
         if (response.data.success) {
-          alert("User created successfullty");
-          navigate("/auth/login");
           console.log(response);
+          console.log(response.data.url);
+
+          // Automatically download the image
+          const link = document.createElement("a");
+          link.href = response.data.url;
+          link.download = "image.jpg";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          message.info("QR Code downloaded");
+
+          setTimeout(() => {
+            setIsLoading(false);
+            // Navigate to login page
+            navigate("/auth/login");
+          }, 1000); // 2 seconds delay
         } else {
-          alert("Something went wrong");
+          message.error("Something went wrong");
+          setIsLoading(false);
         }
       })
       .catch(function (error) {
@@ -81,24 +108,33 @@ const Register = () => {
       });
   };
 
-
-
   return (
     <Container
       sx={{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "100vh",
+        // minHeight: "100vh",
+        border: "none",
       }}
     >
+      {/* Loading animation*/}
+      {isLoading && (
+        <Box sx={{ width: "100vw", top: "80px", }}>
+          <Loader />
+        </Box>
+
+      )}
+
+      {/* success msg ends */}
+
       <form onSubmit={handleSubmit} className="register-form">
         <FormControl
           sx={{
             width: {
-              xs: "100vw",
-              md: "50vw",
-              border: "1px solid white",
+              xs: "95vw",
+              sm: "75vw",
+              // md: "50vw",
               padding: "50px 30px",
               borderRadius: "10px",
             },
@@ -107,42 +143,55 @@ const Register = () => {
           <Stack direction="row" spacing={2}>
             <Box
               sx={{
-                width: "50%",
-                display: { xs: "none", sm: "block", backgroundColor: "grey" },
+                marginTop: "20px",
+                display: {
+                  xs: "none",
+                  sm: "block",
+                  backgroundColor: "grey",
+                },
                 backgroundImage:
                   "url('https://www.shutterstock.com/image-vector/vector-design-avatar-dummy-sign-600nw-1290556063.jpg')",
                 backgroundSize: "cover",
                 position: "relative",
+                width: "50%",
+                borderRadius: "10px",
+                overflow: "hidden"
               }}
             >
               {/* Photo */}
               {!imgBtn && (
                 <Box
                   sx={{
+                    textAlign: "center",
+                    padding: "0 auto",
                     backgroundColor: "black",
-                    position: "absolute",
-                    bottom: "0",
-                    left: "0",
-                    right: "0",
-                    margin: "0 auto",
+
                   }}
                 >
-                  <Button onClick={handleImgBtn}>Click to take picture</Button>
+                  <Button
+                    onClick={handleImgBtn}
+                  >
+                    Click to take picture
+                  </Button>
                 </Box>
               )}
 
               {imgBtn && (
-                <Box sx={{ position: "relative" }}>
+                <Box sx={{
+                  position: "relative",
+                  textAlign: "center",
+                  backgroundColor: "black"
+                }}>
                   <Webcam
                     audio={false}
-                    ref={webcamRef}
+                    ref={webcamRefSecondary}
                     screenshotFormat="image/jpeg"
                     videoConstraints={videoConstraints}
                   />
                   <Button
                     onClick={(e) => {
                       e.preventDefault();
-                      capture();
+                      captureSecondary();
                     }}
                   >
                     Capture photo
@@ -150,14 +199,14 @@ const Register = () => {
 
                   {imgSrc && (
                     <Box sx={{ position: "absolute", top: "0", left: "0" }}>
-                      <img src={imgSrc} />
+                      <img src={imgSrc} alt="user photo" />
                     </Box>
                   )}
                 </Box>
               )}
             </Box>
             <Stack spacing={2} sx={{ width: { xs: "100%", sm: "50%" } }}>
-              <Typography variant="h4">Register</Typography>
+              <Typography variant="h4" color={"primary"}>Register</Typography>
 
               <TextField
                 label="Email"
@@ -178,14 +227,33 @@ const Register = () => {
               />
 
               <Stack direction="row" spacing={2}>
-                <TextField
-                  label="Course"
-                  name="course"
-                  type="text"
-                  onChange={handleChange}
-                  value={formData.course}
-                  required
-                />
+
+                <FormControl fullWidth>
+                  <InputLabel id="course-select">Course</InputLabel>
+                  <Select
+                    labelId="course-select"
+                    label="Course"
+                    name="course"
+                    type="text"
+                    onChange={handleChange}
+                    value={formData.course}
+                    required
+                  >
+                    <MenuItem value={"FY MCA"}>FY MCA</MenuItem>
+                    <MenuItem value={"SY MCA"}>SY MCA</MenuItem>
+
+                    <MenuItem value={"FY CMPN"}>FY CMPN</MenuItem>
+                    <MenuItem value={"SY CMPN"}>SY CMPN</MenuItem>
+                    <MenuItem value={"TY CMPN"}>TY CMPN</MenuItem>
+                    <MenuItem value={"BE CMPN"}>BE CMPN</MenuItem>
+
+                    <MenuItem value={"FY INFT"}>FY INFT</MenuItem>
+                    <MenuItem value={"SY INFT"}>SY INFT</MenuItem>
+                    <MenuItem value={"TY INFT"}>TY INFT</MenuItem>
+                    <MenuItem value={"BE INFT"}>BE INFT</MenuItem>
+
+                  </Select>
+                </FormControl>
 
                 <FormControl fullWidth>
                   <InputLabel id="division-select">Division</InputLabel>
@@ -196,11 +264,11 @@ const Register = () => {
                     type="text"
                     onChange={handleChange}
                     value={formData.division}
-                    defaultValue={"FYMCA-A"}
                     required
                   >
-                    <MenuItem value={"FYMCA-A"}>FYMCA-A</MenuItem>
-                    <MenuItem value={"FYMCA-B"}>FYMCA-B</MenuItem>
+                    <MenuItem value={"A"}>A</MenuItem>
+                    <MenuItem value={"B"}>B</MenuItem>
+
                   </Select>
                 </FormControl>
               </Stack>
@@ -233,18 +301,25 @@ const Register = () => {
                 {!imgBtn && (
                   <Box
                     sx={{
+                      textAlign: "center",
+                      padding: "0 auto",
                       backgroundColor: "black",
-
                     }}
                   >
-                    <Button onClick={handleImgBtn} sx={{ display: 'block', margin: '0' }}>
+                    <Button
+                      onClick={handleImgBtn}
+                    >
                       Click to take picture
                     </Button>
                   </Box>
                 )}
 
                 {imgBtn && (
-                  <Box sx={{ position: "relative" }}>
+                  <Box sx={{
+                    position: "relative",
+                    textAlign: "center",
+                    backgroundColor: "black",
+                  }}>
                     <Webcam
                       audio={false}
                       ref={webcamRef}
@@ -262,7 +337,7 @@ const Register = () => {
 
                     {imgSrc && (
                       <Box sx={{ position: "absolute", top: "0", left: "0" }}>
-                        <img src={imgSrc} />
+                        <img src={imgSrc} alt="user photo" style={{ height: "100%s" }} />
                       </Box>
                     )}
                   </Box>
@@ -273,7 +348,7 @@ const Register = () => {
                 direction="row"
                 sx={{ justifyContent: "space-between", alignItems: "baseline" }}
               >
-                <Link to={"/auth/login"}>Go To Login</Link>
+                <Button href="/auth/voter/login" sx={{ textDecoration: "underline" }}>Go To Login</Button>
 
                 <Button type="submit " variant="contained">
                   Register

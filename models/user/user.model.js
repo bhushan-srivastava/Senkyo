@@ -13,10 +13,19 @@ const userSchema = Schema({
         trim: true,
         unique: [true, 'Email already exists'],
         // match: [/.+\@.+\..+/, 'Please fill a valid email address'],
-        validate: {
-            validator: validator.isEmail,
-            message: 'Please fill a valid email address'
-        },
+        validate: [
+            {
+                validator: validator.isEmail,
+                message: 'Please fill a valid email address'
+            },
+
+            {
+                validator: function (value) {
+                    return value.endsWith('@ves.ac.in');
+                },
+                message: 'Please use your VES email ID'
+            }
+        ],
         required: [true, 'Email is required']
     },
     password: {
@@ -26,16 +35,29 @@ const userSchema = Schema({
     },
     "course": {
         type: String,
-        required: [true, 'Course field is required']
+        required: [true, 'Course is required'],
+        enum: {
+            values: [
+                "FY MCA", "SY MCA",
+                "FY CMPN", "SY CMPN", "TY CMPN", "BE CMPN",
+                "FY INFT", "SY INFT", "TY INFT", "BE INFT"
+            ],
+            message: 'Invalid Course'
+        }
     },
     "division": {
         type: String,
-        required: [true, 'division field is required']
+        required: [true, 'Division is required'],
+        enum: {
+            values: ['A', 'B'],
+            message: 'Invalid Division'
+        }
     },
     "imgCode": {
         type: String,
-        required: [true, 'User image is required']
+        required: [true, 'User\'s image is required']
     },
+    verified: Boolean,
 
 }, { timestamps: true });
 
