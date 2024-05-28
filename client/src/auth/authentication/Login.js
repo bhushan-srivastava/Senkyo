@@ -117,7 +117,11 @@ const Login = () => {
                     setIsLoading(false);
                     navigate("/");
                 }
-                if (res.status == 422) {
+                else if (res.status == 401) {
+                    setIsLoading(false);
+                    message.error(res.data.message, 10);
+                }
+                else if (res.status == 422) {
                     message.error("Recognition failed. Try again!");
                 }
             })

@@ -48,7 +48,7 @@ const AdminLogin = () => {
       }
 
     } catch (error) {
-      message.error(error.message)
+      message.error(error.message, 10)
     }
   }
 

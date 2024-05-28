@@ -57,7 +57,10 @@ const userSchema = Schema({
         type: String,
         required: [true, 'User\'s image is required']
     },
-    verified: Boolean,
+    verified: {
+        type: Boolean,
+        default: false,
+    },
 
 }, { timestamps: true });
 

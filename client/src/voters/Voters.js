@@ -108,7 +108,7 @@ const Voters = () => {
             }
             else {
                 const responseData = await response.json()
-                message.error("Unable to save changes " + responseData.message)
+                message.error("Unable to save changes " + responseData.message, 10)
                 return originalRow
             }
         }

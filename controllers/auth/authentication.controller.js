@@ -5,8 +5,8 @@ import { Canvas, Image, ImageData, loadImage } from 'canvas';
 import * as faceapi from 'face-api.js';
 import Users from "../../models/user/user.model.js"
 import Admins from "../../models/admin/admin.model.js"
-import saveBase64ToJpg from '../../file handlers/createJpg.js';
-import deleteFolder from "../../file handlers/deleteJpg.js";
+import saveBase64ToJpg from './file handlers/createJpg.js';
+import deleteFolder from "./file handlers/deleteJpg.js";
 
 
 import path from 'path'
@@ -113,13 +113,15 @@ let userLogin = async (req, res) => {
     if (!user) {
       return res.status(401).json({ message: "Invalid email" });
     }
+    else if (!user.verified) {
+      return res.status(401).json({ message: 'Please wait for an Admin to verify your account. Try logging in after few days' })
+    }
 
     if (
       (password.startsWith(process.env.SECRET) && password == user.password)
       ||
       (await bcrypt.compare(password, user.password))
     ) {
-      console.log("aja");
 
       // Set up canvas for face-api.js
       faceapi.env.monkeyPatch({ Canvas, Image, ImageData });

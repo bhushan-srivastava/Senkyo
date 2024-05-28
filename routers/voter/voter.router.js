@@ -11,4 +11,4 @@ voterRouter.route('/:id').put(requireAuth, getUser, updateVoter);
 
 voterRouter.route('/:id').delete(requireAuth, getUser, deleteVoter);
 
-export default voterRouter; 
+export default voterRouter;
