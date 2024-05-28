@@ -11,6 +11,7 @@ import mongoose from "mongoose"
 
 import authRouter from "./routers/auth/auth.router.js"
 import voterRouter from "./routers/voter/voter.router.js";
+import electionRouter from "./routers/election/election.router.js"
 
 dotenv.config()
 
@@ -38,6 +39,7 @@ if (process.env.NODE_ENV === 'production') {
 //handling routes
 server.use('/api/auth', authRouter);
 server.use('/api/voters', voterRouter);
+server.use('/api/elections', electionRouter);
 
 const port = process.env.PORT || 8080
 
