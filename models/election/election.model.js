@@ -1,11 +1,10 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 import validator from "validator"
-import Users from '../user/user.model';
 
 // details for a candidate
 const Candidate = {
     candidateID: {
-        type: mongoose.Types.ObjectId,
+        type: Types.ObjectId,
         ref: 'users',
         required: [true, 'Candidate ID is required']
     },
@@ -17,7 +16,7 @@ const Candidate = {
 
 const Voter = {
     voterID: {
-        type: mongoose.Types.ObjectId,
+        type: Types.ObjectId,
         ref: 'users',
         required: [true, "Voter/User ID is required"]
     }
@@ -29,6 +28,10 @@ const electionSchema = Schema({
         trim: true,
         required: [true, 'Election Name is required'],
         minLength: [4, 'Name must have atleast 4 characters'] // if err then change to 'minlength' (no camelCase)
+    },
+    description: {
+        type: String,
+        trim: true,
     },
     numberOfWinners: {
         type: Number,

@@ -1,14 +1,14 @@
 // Navbar.js
 import React from 'react';
-import { AppBar, Toolbar, IconButton, useMediaQuery } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Link, useMediaQuery } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import Link from '@mui/joy/Link';
 import Menu from '@mui/joy/Menu';
 import MenuButton from '@mui/joy/MenuButton';
 import MenuItem from '@mui/joy/MenuItem';
 import Dropdown from '@mui/joy/Dropdown';
 import Divider from '@mui/joy/Divider';
 import Chip from '@mui/joy/Chip';
+import { Link as JoyUiLink } from '@mui/joy';
 
 import logo from '../images/logo.png';
 
@@ -24,27 +24,40 @@ const Navbar = () => {
     setMenuOpen(!menuOpen);
   };
 
+  const adminNavRoutes = [
+    { text: "Sign in", href: "/auth/admin/login", key: "admin-login" },
+    { text: "Voters", href: "/voters", key: "admin-voters" },
+    { text: "Elections", href: "/elections", key: "admin-elections" },
+  ]
+
+  const voterNavRoutes = [
+    { text: "Create an account", href: "/auth/voter/register", key: 'voter-register' },
+    { text: "Sign in", href: "/auth/voter/login", key: 'voter-login' },
+    { text: "Elections", href: "/elections", key: 'voter-elections' },
+  ]
+
   return (
 
     <div className='navbar'>
       <AppBar sx={{
-        backgroundColor: 'transparent',
+        backgroundColor: 'Background',
         boxShadow: 'none',
       }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <div className='logo-container'>
             <img className='logo' src={logo} alt='logo' />
             {/* <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', fontSize: '1.7rem' }}> */}
-            <Link
+            <JoyUiLink
               level="h6"
               underline="none"
               variant="plain"
               sx={{ fontWeight: 'bold', fontSize: '1.7rem' }}
               href='/'
+              color='neutral'
             >
               {/* <img className='logo' src={logo} alt='logo'></img> */}
               EtherBallot
-            </Link>
+            </JoyUiLink>
             {/* </Typography> */}
           </div>
           <div>
@@ -52,7 +65,6 @@ const Navbar = () => {
               <IconButton
                 size="large"
                 edge="end"
-                color="primary"
                 aria-label="menu"
                 sx={{ ml: 2 }}
                 onClick={handleMenuToggle}
@@ -66,24 +78,29 @@ const Navbar = () => {
                 <Dropdown>
                   <MenuButton
                     variant="plain"
-                    color="primary"
                     size='lg'
+                  // color='black'
                   >
                     Admin
                   </MenuButton>
 
                   <Menu>
-                    <MenuItem>
-                      <Link underline='none' href='/auth/admin/login'>Login</Link>
-                    </MenuItem>
 
-                    <MenuItem>
-                      <Link underline='none' href='/voters'>Voters</Link>
-                    </MenuItem>
-
-                    <MenuItem>
-                      <Link underline='none' href='/elections'>Elections</Link>
-                    </MenuItem>
+                    {
+                      adminNavRoutes.map((route, index) =>
+                        <MenuItem>
+                          <Link
+                            href={route.href}
+                            underline='none'
+                            color='InfoText'
+                            // variant='body2'
+                            sx={{ width: '100%' }}
+                          >
+                            {route.text}
+                          </Link>
+                        </MenuItem>
+                      )
+                    }
 
                   </Menu>
 
@@ -92,28 +109,34 @@ const Navbar = () => {
                 <Dropdown>
                   <MenuButton
                     variant="plain"
-                    color="primary"
                     size='lg'
                   >
                     Voter
                   </MenuButton>
 
                   <Menu>
-                    <MenuItem>
-                      <Link underline='none' href='/auth/voter/register'>Register</Link>
-                    </MenuItem>
 
-                    <MenuItem>
-                      <Link underline='none' href='/auth/voter/login'>Login</Link>
-                    </MenuItem>
+                    {
+                      voterNavRoutes.map((route, index) =>
+                        <MenuItem>
+                          <Link
+                            href={route.href}
+                            underline='none'
+                            color='InfoText'
+                            // variant='subtitle1'
+                            sx={{ width: '100%' }}
+                          >
+                            {route.text}
+                          </Link>
+                        </MenuItem>
+                      )
+                    }
 
-                    <MenuItem>
-                      <Link underline='none' href='/elections'>Elections</Link>
-                    </MenuItem>
 
                   </Menu>
 
                 </Dropdown>
+
 
               </>
             )}
@@ -133,7 +156,6 @@ const Navbar = () => {
               left: 0,
               paddingTop: '25px',
               backgroundColor: 'Background',
-              color: 'primary'
             }}
 
             onClick={handleMenuToggle}
@@ -144,8 +166,6 @@ const Navbar = () => {
               <br />
               <Divider>
                 <Chip
-                  color="primary"
-
                   size="lg"
                   variant="soft"
                   sx={{ borderRadius: '6px' }}
@@ -154,17 +174,24 @@ const Navbar = () => {
                 </Chip>
               </Divider>
               <br />
-              <Link underline='none' variant="plain" href='/auth/admin/login'>Login</Link>
-              <br />
-              <Link underline='none' variant="plain" href='/voters'>Voters</Link>
-              <br />
-              <Link underline='none' variant="plain" href='/elections'>Elections</Link>
-              <br />
+              {
+                adminNavRoutes.map((route, index) => {
+                  return (
+                    <Link
+                      href={route.href}
+                      underline='none'
+                      // color='InfoText'
+                      // variant='subtitle1'
+                      sx={{ width: '100%', mt: 1.5, mb: 1.5, textAlign: 'center' }}
+                    >
+                      {route.text}
+                    </Link>
+                  )
+                })
+              }
               <br />
               <Divider>
                 <Chip
-                  color="primary"
-
                   size="lg"
                   variant="soft"
                   sx={{ borderRadius: '6px' }}
@@ -173,12 +200,23 @@ const Navbar = () => {
                 </Chip>
               </Divider>
               <br />
-              <Link underline='none' variant="plain" href='/auth/voter/register'>Register</Link>
-              <br />
-              <Link underline='none' variant="plain" href='/auth/voter/login'>Login</Link>
-              <br />
-              <Link underline='none' variant="plain" href='/elections'>Elections</Link>
-              <br />
+
+
+              {
+                voterNavRoutes.map((route, index) => {
+                  return (
+                    <Link
+                      href={route.href}
+                      underline='none'
+                      // color='InfoText'
+                      // variant='subtitle1'
+                      sx={{ width: '100%', mt: 1.5, mb: 1.5, textAlign: 'center' }}
+                    >
+                      {route.text}
+                    </Link>
+                  )
+                })
+              }
 
             </div>
           </div>

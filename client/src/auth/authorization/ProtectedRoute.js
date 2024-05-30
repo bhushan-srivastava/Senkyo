@@ -65,11 +65,13 @@ const ProtectedRoute = () => {
             :
             authResult.message == "Authorized" ?
                 <>
-                    <Stack direction="row" spacing={2} sx={{ marginLeft: "2.5vw", marginBottom: "2vh", marginTop: "2vh", marginRight: "3vw", display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography level="h2" sx={{ marginLeft: "2.5vw", marginBottom: "2vh" }} color={"primary"}>
+                    <Stack direction="row" spacing={2} sx={{ marginLeft: "35px", marginBottom: "2vh", marginTop: "2vh", marginRight: "40px", display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography level="h3" sx={{ marginBottom: "2vh", }}>
                             Welcome
                             {
-                                " " + decodeURI(document.cookie.replace('name=', '')).split(' ')[0] + "!"
+                                " " + decodeURI(document.cookie.replace('name=', '')).split(' ')[0]
+
+                                + "!"
                             }
                         </Typography>
 

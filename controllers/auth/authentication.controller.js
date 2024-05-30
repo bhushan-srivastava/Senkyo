@@ -16,6 +16,10 @@ async function adminLogin(req, res) {
   try {
     const admin = await Admins.findOne({ "email": req.body.email });
 
+    if (!admin) {
+      throw new Error('Incorrect email')
+    }
+
     if (!req.body.password) {
       throw new Error('Password is required to login')
     }
@@ -26,7 +30,7 @@ async function adminLogin(req, res) {
 
     }
 
-    const token = createToken({ email: admin.email });
+    const token = createToken(admin.email);
     // for production if website is deployed on https server
     /* production environment */
     if (process.env.NODE_ENV === 'production') {
@@ -46,9 +50,9 @@ async function adminLogin(req, res) {
 
 // create json web token
 const threeDays = 3 * 24 * 60 * 60 * 1000; // 3 days in milliseconds
-function createToken(ob) {
+function createToken(email) {
   return jwt.sign(
-    ob,
+    { email },
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: (threeDays / 1000) }
   );
@@ -113,7 +117,7 @@ let userLogin = async (req, res) => {
     if (!user) {
       return res.status(401).json({ message: "Invalid email" });
     }
-    else if (!user.verified) {
+    if (user && !user.verified) {
       return res.status(401).json({ message: 'Please wait for an Admin to verify your account. Try logging in after few days' })
     }
 
@@ -140,12 +144,7 @@ let userLogin = async (req, res) => {
       console.log('Results:', results[0]._distance);
 
       if (distance <= 0.6) {
-        const accessToken = createToken({
-          user: {
-            email: user.email,
-            verified: user.verified,
-          }
-        });
+        const accessToken = createToken(user.email);
 
         // for production if website is deployed on https server
         /* production environment */
@@ -157,7 +156,7 @@ let userLogin = async (req, res) => {
           res.cookie('vote', accessToken, { httpOnly: true, maxAge: threeDays });
         }
 
-        res.cookie('name', user.name, { httpOnly: true, maxAge: threeDays });
+        res.cookie('name', user.name, { httpOnly: false, maxAge: threeDays });
 
         res.statusCode = 200;
 

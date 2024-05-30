@@ -17,7 +17,8 @@ async function getUser(req, res, next) {
                 throw new Error("Incorrect email")
             }
         }
-        else if (!voter.verified) {
+
+        if (voter && !voter.verified) {
             return res.status(401).json({ message: 'Please wait for an Admin to verify your account. Try logging in after few days' })
         }
 

@@ -165,12 +165,13 @@ const Voters = () => {
         {
             field: "imgCode",
             headerName: "Photo",
-            width: 150,
+            width: 75,
             filterable: false,
             sortable: false,
             renderCell: (params) =>
 
-                <Image width={48} height={48} src={params.value} />
+                <Image width={48} height={48} src={params.value}
+                    style={{ borderRadius: "100px" }} />
             ,
             //  const buffer = Buffer.from(imageBuffer, 'binary').toString('base64');
             // // setImageSrc(`data:image/jpeg;base64,${buffer}`);
@@ -179,13 +180,13 @@ const Voters = () => {
         {
             field: "name",
             headerName: "Name",
-            width: 150,
+            width: 200,
             editable: true,
         },
         {
             field: "email",
             headerName: "Email",
-            width: 150,
+            width: 200,
             editable: true,
         },
         {
@@ -240,7 +241,7 @@ const Voters = () => {
         !isAdmin ?
             <Navigate to="/" />
             :
-            <Box>
+            <Box sx={{ marginLeft: "30px", marginRight: "10px" }}>
 
                 <Modal open={showModal} onClose={() => setShowModal(false)}>
 
@@ -259,17 +260,19 @@ const Voters = () => {
 
                 <Paper variant="outlined" sx={{ border: 'none', marginRight: '3vw' }}>
                     <br />
-                    <Typography level="h3" sx={{ marginLeft: "2.5vw", marginBottom: "2vh", }} color={"primary"}>
+                    <Typography level="h3" sx={{ marginLeft: "5px", marginBottom: "2vh", }}>
                         Admin: Voters Panel
                     </Typography>
 
                     <DataGrid
                         sx={{
-                            border: "none",
-                            marginLeft: "2vw",
+                            // border: "none",
+                            // marginLeft: "2vw",
                         }}
+
                         rows={voterRows}
                         columns={columns}
+                        density="comfortable"
                         initialState={{
                             pagination: {
                                 paginationModel: {

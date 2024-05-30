@@ -71,11 +71,11 @@ const AdminLogin = () => {
           alignItems: 'center',
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: "primary" }}>
+        <Avatar variant='rounded' sx={{ m: 1, backgroundColor: 'secondary.main' }}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component="h1" variant="h5" color={"primary"}>
-          Sign in
+        <Typography component="h1" variant="h5">
+          Welcome back!
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
@@ -104,6 +104,7 @@ const AdminLogin = () => {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+
           >
             Sign in
           </Button>

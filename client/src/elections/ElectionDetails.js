@@ -5,7 +5,7 @@ const ElectionDetails = () => {
     return (
         <Paper variant="outlined">
             <br />
-            <Typography level='h3' sx={{ marginLeft: '2vw' }} color={"primary"}>
+            <Typography level='h3' sx={{ marginLeft: '2vw' }}>
                 Election Name
             </Typography>
 

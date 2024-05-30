@@ -10,10 +10,11 @@ import {
     Select,
     MenuItem,
     InputLabel,
+    Link
 } from "@mui/material";
 import Webcam from "react-webcam";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import Loader from "../../static/components/Loader";
 import { message } from "antd";
@@ -98,7 +99,7 @@ const Login = () => {
     };
 
     //sending request to backend
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         console.log("Data to be submitted: ", formData);
@@ -110,27 +111,39 @@ const Login = () => {
 
         setIsLoading(true);
         console.log(formData);
-        axios
-            .post("/api/auth/voter/login", formData)
-            .then((res) => {
-                if (res.status == 200) {
-                    setIsLoading(false);
-                    navigate("/");
-                }
-                else if (res.status == 401) {
-                    setIsLoading(false);
-                    message.error(res.data.message, 10);
-                }
-                else if (res.status == 422) {
-                    message.error("Recognition failed. Try again!");
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
+        try {
+            const response = await fetch("/api/auth/voter/login", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
             });
+
+            if (response.status === 200) {
+                setIsLoading(false);
+                navigate("/elections");
+            } else if (response.status === 401) {
+                setIsLoading(false);
+                const data = await response.json();
+                message.error(data.message, 10);
+            } else if (response.status === 422) {
+                setIsLoading(false);
+                message.error("Recognition failed. Try again!");
+            } else {
+                setIsLoading(false);
+                const data = await response.json();
+                message.error(data.message, 10);
+            }
+        } catch (error) {
+            setIsLoading(false);
+            message.error("An error occurred while processing your request.");
+        }
+
     };
 
     return (
+
         <Container
             sx={{
                 display: "flex",
@@ -228,7 +241,7 @@ const Login = () => {
                         </Box>
 
                         <Stack spacing={2} sx={{ width: { xs: "100%", sm: "50%" } }}>
-                            <Typography variant="h4" color={"primary"}>Login</Typography>
+                            <Typography component='h1' variant="h5">Welcome back!</Typography>
 
                             <TextField
                                 label="Email"
@@ -311,7 +324,7 @@ const Login = () => {
                                 )}
                             </Box>
 
-                            {qr && <Typography sx={{ textAlign: "center" }}>or</Typography>}
+                            {qr && <Typography sx={{ textAlign: "center" }}>OR</Typography>}
 
                             {/* qrcode reader */}
                             <Box sx={{ textAlign: "center" }}>
@@ -321,20 +334,33 @@ const Login = () => {
                                 )}
                             </Box>
 
-                            <Stack
-                                direction="row"
-                                sx={{ justifyContent: "space-between", alignItems: "baseline" }}
+
+                            <Button type="submit" fullWidth variant="contained">
+                                Sign in
+                            </Button>
+
+                            <p
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'flex-end',
+                                    alignItems: 'baseline'
+                                }}
                             >
-                                <Button href="/auth/voter/register" sx={{ textDecoration: "underline" }}>Create an account</Button>
-                                <Button type="submit " variant="contained">
-                                    Login
-                                </Button>
-                            </Stack>
+
+                                <Link href="/auth/voter/register" variant="body2">
+                                    Don't have an account? Sign Up
+                                </Link>
+
+                            </p>
+
                         </Stack>
                     </Stack>
                 </FormControl>
             </form>
         </Container>
+
     );
 };
 

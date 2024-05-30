@@ -11,10 +11,11 @@ import {
   MenuItem,
   InputLabel,
   Modal,
+  Link
 } from "@mui/material";
 import Webcam from "react-webcam";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Loader from "../../static/components/Loader";
 import { message } from "antd";
 
@@ -109,6 +110,8 @@ const Register = () => {
   };
 
   return (
+
+
     <Container
       sx={{
         display: "flex",
@@ -206,7 +209,7 @@ const Register = () => {
               )}
             </Box>
             <Stack spacing={2} sx={{ width: { xs: "100%", sm: "50%" } }}>
-              <Typography variant="h4" color={"primary"}>Register</Typography>
+              <Typography variant="h5" component='h1'>Join EtherBallot.</Typography>
 
               <TextField
                 label="Email"
@@ -344,21 +347,34 @@ const Register = () => {
                 )}
               </Box>
 
-              <Stack
-                direction="row"
-                sx={{ justifyContent: "space-between", alignItems: "baseline" }}
-              >
-                <Button href="/auth/voter/login" sx={{ textDecoration: "underline" }}>Go To Login</Button>
+              <Button type="submit" fullWidth variant="contained">
+                Register
+              </Button>
 
-                <Button type="submit " variant="contained">
-                  Register
-                </Button>
-              </Stack>
+
+
+              <p
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'flex-end',
+                  alignItems: 'baseline'
+                }}
+              >
+
+                <Link href="/auth/voter/login" variant="body2">
+                  Already have an account? Sign in
+                </Link>
+
+              </p>
+
             </Stack>
           </Stack>
         </FormControl>
-      </form>
-    </Container>
+      </form >
+    </Container >
+
   );
 };
 

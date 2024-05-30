@@ -1,14 +1,18 @@
-import Elections from "../../models/election/election.model"
+import Elections from "../../models/election/election.model.js"
 import calculateResult from './results.js'
 import {/* add function names here */ } from './electionScheduler.js'
 
-// auth middleware (authHelper.js) gives a variable req.body.isAdmin, this variable is used to check if the request is sent by an admin or a voter
+// auth middleware (authHelper.js) gives a variable 'req.body.isAdmin', this variable is used to check if the request is sent by an admin or a voter
 // if (req.body.isAdmin) {//admin use cases}
 // else {//voter use cases}
+// middleware will give an object 'req.body.user', this stores the user object from the User-DB
+// if the user is an admin then req.body.user will store the admin's object from the Admin-DB
 
 async function getAllElections(req, res) {
-    //get all elections
-    // user and admin both can use this function
+    // for admin and voter both
+
+    // if voter then send all elections that the user is allowed to vote in. Use course and division field of the elections table
+    // Elections.find(courses includes req.body.user.course, division includes req.body.user.division
 }
 
 async function getElectionByID(req, res) {
@@ -62,6 +66,7 @@ async function deleteElection(req, res) {
 
 export { getAllElections, getElectionByID, createElection, adminUpdateElection, voterUpdateElection, deleteElection }
 
+/*
 
 // reference code for adding a vote from ChatGPT
 
@@ -119,3 +124,6 @@ addVote(userId, electionId, candidateId);
 //     We find the candidate by their ID and update the noOfVotesReceived field.
 //     We add the user to the list of voters who have voted in the election.
 //     Finally, we save the updated election.
+
+
+*/
