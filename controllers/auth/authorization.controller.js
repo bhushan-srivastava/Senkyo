@@ -6,16 +6,12 @@ function requireAuth(req, res, next) {
     try {
         const token = req.cookies.vote;
 
-        console.log(token);
-
         if (!token) {
             throw new Error('Unauthorized')
         }
 
         // check json web token exists & is verified
         const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-
-        console.log(decodedToken);
 
         if (!validator.isEmail(decodedToken.email)) {
             throw new Error('Unauthorized') // Invalid email

@@ -20,10 +20,15 @@ import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined';
 // import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import EventIcon from '@mui/icons-material/Event';
 
-import HowToVoteOutlinedIcon from '@mui/icons-material/HowToVoteOutlined';
 import BallotOutlinedIcon from '@mui/icons-material/BallotOutlined';
 import PollOutlinedIcon from '@mui/icons-material/PollOutlined';
 import ModeEditOutlinedIcon from '@mui/icons-material/ModeEditOutlined';
+import ReadMoreIcon from '@mui/icons-material/ReadMore';
+import PendingOutlinedIcon from '@mui/icons-material/PendingOutlined';
+import PauseIcon from '@mui/icons-material/Pause';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import HowToVoteIcon from '@mui/icons-material/HowToVote';
+import DoneIcon from '@mui/icons-material/Done';
 
 import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
@@ -33,20 +38,111 @@ import Fab from '@mui/material/Fab';
 
 import { useOutletContext } from "react-router-dom"
 import { Paper } from '@mui/material';
+import FilterSort from './Filter';
 const Elections = () => {
     const { isAdmin } = useOutletContext();
     const [elections, setElections] = useState([]);
-
+    const dummyElections = [
+        {
+            title: "Student Council",
+            description: "Elections for selecting student council members",
+            numberOfWinners: 5,
+            course: ["FY MCA", "SY MCA", "FY CMPN"],
+            division: ["A", "B"],
+            status: "Pending",
+            registrationStart: new Date("2024-06-01"),
+            registrationEnd: new Date("2024-06-05"),
+            votingStart: new Date("2024-06-07"),
+            votingEnd: new Date("2024-06-10"),
+            resultDeclared: false,
+            candidates: [],
+            votersWhoHaveVoted: []
+        },
+        {
+            title: "Class Representative",
+            description: "Elections for selecting class representatives",
+            numberOfWinners: 2,
+            course: ["SY CMPN", "BE CMPN"],
+            division: ["A"],
+            status: "Registration",
+            registrationStart: new Date("2024-05-20"),
+            registrationEnd: new Date("2024-05-25"),
+            votingStart: new Date("2024-05-27"),
+            votingEnd: new Date("2024-06-01"),
+            resultDeclared: false,
+            candidates: [],
+            votersWhoHaveVoted: []
+        },
+        {
+            title: "Department Head",
+            description: "Elections for selecting department heads",
+            numberOfWinners: 1,
+            course: ["TY INFT", "BE INFT"],
+            division: ["B"],
+            status: "Ongoing",
+            registrationStart: new Date("2024-05-15"),
+            registrationEnd: new Date("2024-05-20"),
+            votingStart: new Date("2024-05-22"),
+            votingEnd: new Date("2024-05-25"),
+            resultDeclared: false,
+            candidates: [],
+            votersWhoHaveVoted: []
+        },
+        {
+            title: "Club Committee",
+            description: "Elections for selecting club committee members",
+            numberOfWinners: 3,
+            course: ["FY INFT", "TY INFT"],
+            division: ["A", "B"],
+            status: "Finished",
+            registrationStart: new Date("2024-05-10"),
+            registrationEnd: new Date("2024-05-15"),
+            votingStart: new Date("2024-05-17"),
+            votingEnd: new Date("2024-05-20"),
+            resultDeclared: true,
+            candidates: [],
+            votersWhoHaveVoted: []
+        },
+        {
+            title: "Inter-Department Sports Meet Elections",
+            description: "Elections for organizing the inter-department sports meet",
+            numberOfWinners: 3,
+            course: ["FY CMPN", "FY INFT"],
+            division: ["A"],
+            status: "Paused",
+            registrationStart: new Date("2024-07-01"),
+            registrationEnd: new Date("2024-07-05"),
+            votingStart: new Date("2024-07-07"),
+            votingEnd: new Date("2024-07-10"),
+            resultDeclared: false,
+            candidates: [],
+            votersWhoHaveVoted: []
+        },
+    ];
     useEffect(() => {
-        axios
-            .get("/api/elections/")
-            .then((res) => {
-                setElections(res.data);
-                console.log("data from server:", res);
-            })
-            .catch((err) => console.log("Error in useEffect :", err));
+        setElections(dummyElections)
+        // axios
+        //     .get("/api/elections/")
+        //     .then((res) => {
+        //         setElections(res.data);
+        //         console.log("data from server:", res);
+        //     })
+        //     .catch((err) => console.log("Error in useEffect :", err));
 
     }, []); // Empty dependency array to fetch data only once on component mount
+
+    // setElections([{ title: 'abc' }])
+
+    const statusIcons = {
+        Pending: () => <PendingOutlinedIcon />,
+        Registration: () => <HowToRegIcon />,
+        Ongoing: () => <HowToVoteIcon />,
+        Paused: () => <PauseIcon />,
+        Finished: () => <DoneIcon />
+    }
+
+
+    const status = 'Pending' // Dummy value
 
     return (
         <Paper
@@ -57,16 +153,16 @@ const Elections = () => {
             <Typography level="h4" sx={{ marginLeft: "5px", marginBottom: "2vh", }}>
                 {isAdmin && "Admin: "}Elections
             </Typography>
-
+            <FilterSort elections={elections} />
             <Grid
                 container
                 spacing={2}
                 direction="row"
-                justifyContent="center"
+                justifyContent="flex-start"
                 alignItems="center"
             // sx={{ marginLeft: "30px", marginRight: "35px" }}
             >
-                {['Jimmy', 'Michal', 'Jun', 'Marija'].map((name, index) => (
+                {elections.map((election, index) => (
                     <Grid
                         key={index}
                         xs={12}
@@ -116,7 +212,7 @@ const Elections = () => {
                                     </AvatarGroup>
 
 
-                                    <Typography marginTop='20px' marginBottom='8px' level="h4">Election Title
+                                    <Typography marginTop='20px' marginBottom='8px' level="h4">{election.title}
                                     </Typography>
 
 
@@ -129,12 +225,32 @@ const Elections = () => {
                                 <List>
                                     <ListItem>
                                         <ListItemDecorator>
+                                            {statusIcons[election.status]()}
+                                        </ListItemDecorator>
+                                        <ListItemContent>
+                                            <Typography level="title-sm">Status</Typography>
+                                            <Typography level="body-sm">
+                                                {election.status}
+                                            </Typography>
+                                        </ListItemContent>
+                                    </ListItem>
+
+                                    <ListItem>
+                                        <ListItemDecorator>
                                             <CalendarMonthIcon />
                                         </ListItemDecorator>
                                         <ListItemContent>
                                             <Typography level="title-sm">Registration Dates</Typography>
                                             <Typography level="body-sm">
-                                                DD/MM/YY - DD/MM/YY
+                                                {election.registrationStart.toLocaleDateString('en-GB', {
+                                                    day: '2-digit',
+                                                    month: '2-digit',
+                                                    year: '2-digit'
+                                                }) + ' - ' + election.registrationEnd.toLocaleDateString('en-GB', {
+                                                    day: '2-digit',
+                                                    month: '2-digit',
+                                                    year: '2-digit'
+                                                })}
                                             </Typography>
                                         </ListItemContent>
                                     </ListItem>
@@ -146,7 +262,15 @@ const Elections = () => {
                                         <ListItemContent>
                                             <Typography level="title-sm">Voting Dates</Typography>
                                             <Typography level="body-sm">
-                                                DD/MM/YY - DD/MM/YY
+                                                {election.votingStart.toLocaleDateString('en-GB', {
+                                                    day: '2-digit',
+                                                    month: '2-digit',
+                                                    year: '2-digit'
+                                                }) + ' - ' + election.votingEnd.toLocaleDateString('en-GB', {
+                                                    day: '2-digit',
+                                                    month: '2-digit',
+                                                    year: '2-digit'
+                                                })}
                                             </Typography>
                                         </ListItemContent>
                                     </ListItem>
@@ -158,7 +282,7 @@ const Elections = () => {
                                         <ListItemContent>
                                             <Typography level="title-sm">Number of Winners</Typography>
                                             <Typography level="body-sm">
-                                                5
+                                                {election.numberOfWinners}
                                             </Typography>
                                         </ListItemContent>
                                     </ListItem>
@@ -168,9 +292,9 @@ const Elections = () => {
                                             <EventIcon />
                                         </ListItemDecorator>
                                         <ListItemContent>
-                                            <Typography level="title-sm">Result Declaration</Typography>
+                                            <Typography level="title-sm">Result Declared?</Typography>
                                             <Typography level="body-sm">
-                                                DD/MM/YY
+                                                {election.resultDeclared ? 'Yes' : 'No'}
                                             </Typography>
                                         </ListItemContent>
                                     </ListItem>
@@ -193,9 +317,7 @@ const Elections = () => {
                                         isAdmin ?
                                             <ModeEditOutlinedIcon color='fff' />
                                             :
-                                            <HowToVoteOutlinedIcon color='fff' />
-                                        /* <BallotOutlinedIcon color='fff' /> */
-                                        /* <PollOutlinedIcon color='fff' /> */
+                                            <ReadMoreIcon color='fff' />
                                     }
                                 </IconButton>
                             </CardActions>

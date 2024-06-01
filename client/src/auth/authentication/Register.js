@@ -31,6 +31,25 @@ const Register = () => {
 
   const navigate = useNavigate();
 
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
+    },
+  };
+
+  const courses = [
+    "FY MCA", "SY MCA",
+    "FY CMPN", "SY CMPN", "TY CMPN", "BE CMPN",
+    "FY INFT", "SY INFT", "TY INFT", "BE INFT"
+  ]
+
+  const divisions = ['A', 'B']
+
   const videoConstraints = {
     width: 700,
     height: 700,
@@ -241,19 +260,11 @@ const Register = () => {
                     onChange={handleChange}
                     value={formData.course}
                     required
+                    MenuProps={MenuProps}
                   >
-                    <MenuItem value={"FY MCA"}>FY MCA</MenuItem>
-                    <MenuItem value={"SY MCA"}>SY MCA</MenuItem>
-
-                    <MenuItem value={"FY CMPN"}>FY CMPN</MenuItem>
-                    <MenuItem value={"SY CMPN"}>SY CMPN</MenuItem>
-                    <MenuItem value={"TY CMPN"}>TY CMPN</MenuItem>
-                    <MenuItem value={"BE CMPN"}>BE CMPN</MenuItem>
-
-                    <MenuItem value={"FY INFT"}>FY INFT</MenuItem>
-                    <MenuItem value={"SY INFT"}>SY INFT</MenuItem>
-                    <MenuItem value={"TY INFT"}>TY INFT</MenuItem>
-                    <MenuItem value={"BE INFT"}>BE INFT</MenuItem>
+                    {courses.map((course, index) =>
+                      <MenuItem value={course}>{course}</MenuItem>
+                    )}
 
                   </Select>
                 </FormControl>
@@ -268,9 +279,11 @@ const Register = () => {
                     onChange={handleChange}
                     value={formData.division}
                     required
+                    MenuProps={MenuProps}
                   >
-                    <MenuItem value={"A"}>A</MenuItem>
-                    <MenuItem value={"B"}>B</MenuItem>
+                    {divisions.map((division, index) =>
+                      <MenuItem value={division}>{division}</MenuItem>
+                    )}
 
                   </Select>
                 </FormControl>
