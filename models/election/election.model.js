@@ -71,7 +71,7 @@ const electionSchema = Schema({
         required: [true, 'Registration Start Date is required'],
         validate: {
             validator: validator.isDate,
-            message: 'Date is invalid'
+            message: 'Registration Start Date is invalid'
         },
         // validate: {
         //     validator: function (value) {
