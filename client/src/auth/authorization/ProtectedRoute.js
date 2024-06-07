@@ -65,23 +65,21 @@ const ProtectedRoute = () => {
             :
             authResult.message == "Authorized" ?
                 <>
-                    <Stack direction="row" spacing={2} sx={{ marginLeft: "35px", marginBottom: "2vh", marginTop: "2vh", marginRight: "40px", display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography level="h3" sx={{ marginBottom: "2vh", }}>
-                            Welcome
-                            {
-                                " " + decodeURI(document.cookie.replace('name=', '')).split(' ')[0]
 
-                                + "!"
-                            }
-                        </Typography>
 
-                        <IconButton
-                            onClick={logout}
-                            variant='plain'
-                        >
-                            <Logout />
-                        </IconButton>
-                    </Stack>
+                    <IconButton
+                        onClick={logout}
+                        variant='plain'
+                        sx={{
+                            position: 'fixed',
+                            top: 20,
+                            right: 15,
+                            zIndex: 1000
+                        }}
+                    >
+                        <Logout />
+                    </IconButton>
+
                     <Outlet context={{ isAdmin: authResult.isAdmin }} />
                 </>
                 :

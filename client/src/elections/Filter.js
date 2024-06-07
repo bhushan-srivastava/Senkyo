@@ -49,7 +49,7 @@ const ElectionFilterDialog = ({ open, handleClose }) => {
 
     const divisions = ['A', 'B']
 
-    const statusArr = ['Pending', 'Registration', 'Ongoing', 'Paused', 'Finished']
+    const statusArr = ['Pending', 'Registration', 'Ongoing', 'Finished']
 
     return (
         <Dialog open={open} onClose={handleClose} maxWidth='sm' fullWidth>

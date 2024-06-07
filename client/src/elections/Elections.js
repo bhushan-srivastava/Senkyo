@@ -37,15 +37,17 @@ import Zoom from '@mui/material/Zoom';
 import Fab from '@mui/material/Fab';
 
 import { useOutletContext } from "react-router-dom"
-import { Paper } from '@mui/material';
+import { Pagination, Paper, Stack } from '@mui/material';
 import FilterSort from './Filter';
 const Elections = () => {
     const { isAdmin } = useOutletContext();
     const [elections, setElections] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const electionsPerPage = 4; // Number of elections to display per page
+
     const dummyElections = [
         {
             title: "Student Council",
-            description: "Elections for selecting student council members",
             numberOfWinners: 5,
             course: ["FY MCA", "SY MCA", "FY CMPN"],
             division: ["A", "B"],
@@ -60,7 +62,6 @@ const Elections = () => {
         },
         {
             title: "Class Representative",
-            description: "Elections for selecting class representatives",
             numberOfWinners: 2,
             course: ["SY CMPN", "BE CMPN"],
             division: ["A"],
@@ -75,7 +76,6 @@ const Elections = () => {
         },
         {
             title: "Department Head",
-            description: "Elections for selecting department heads",
             numberOfWinners: 1,
             course: ["TY INFT", "BE INFT"],
             division: ["B"],
@@ -90,7 +90,6 @@ const Elections = () => {
         },
         {
             title: "Club Committee",
-            description: "Elections for selecting club committee members",
             numberOfWinners: 3,
             course: ["FY INFT", "TY INFT"],
             division: ["A", "B"],
@@ -105,11 +104,9 @@ const Elections = () => {
         },
         {
             title: "Inter-Department Sports Meet Elections",
-            description: "Elections for organizing the inter-department sports meet",
             numberOfWinners: 3,
             course: ["FY CMPN", "FY INFT"],
             division: ["A"],
-            status: "Paused",
             registrationStart: new Date("2024-07-01"),
             registrationEnd: new Date("2024-07-05"),
             votingStart: new Date("2024-07-07"),
@@ -118,31 +115,65 @@ const Elections = () => {
             candidates: [],
             votersWhoHaveVoted: []
         },
+        {
+            title: "Club Committee",
+            numberOfWinners: 3,
+            course: ["FY INFT", "TY INFT"],
+            division: ["A", "B"],
+            status: "Finished",
+            registrationStart: new Date("2024-05-10"),
+            registrationEnd: new Date("2024-05-15"),
+            votingStart: new Date("2024-05-17"),
+            votingEnd: new Date("2024-05-20"),
+            resultDeclared: true,
+            candidates: [],
+            votersWhoHaveVoted: []
+        },
+        {
+            title: "Department Head",
+            numberOfWinners: 1,
+            course: ["TY INFT", "BE INFT"],
+            division: ["B"],
+            status: "Ongoing",
+            registrationStart: new Date("2024-05-15"),
+            registrationEnd: new Date("2024-05-20"),
+            votingStart: new Date("2024-05-22"),
+            votingEnd: new Date("2024-05-25"),
+            resultDeclared: false,
+            candidates: [],
+            votersWhoHaveVoted: []
+        },
     ];
+
     useEffect(() => {
-        setElections(dummyElections)
-        // axios
-        //     .get("/api/elections/")
-        //     .then((res) => {
-        //         setElections(res.data);
-        //         console.log("data from server:", res);
+        // axios.get(`/api/elections?page=${currentPage}&limit=${electionsPerPage}`)
+        //     .then(response => {
+        //         setElections(response.data);
         //     })
-        //     .catch((err) => console.log("Error in useEffect :", err));
+        //     .catch(error => {
+        //         console.error('Error fetching elections:', error);
+        //     });
+        setElections(dummyElections)
+    }, [currentPage, electionsPerPage]);
 
-    }, []); // Empty dependency array to fetch data only once on component mount
+    // Get current elections
+    const indexOfLastElection = currentPage * electionsPerPage;
+    const indexOfFirstElection = indexOfLastElection - electionsPerPage;
+    const currentElections = elections.slice(indexOfFirstElection, indexOfLastElection);
 
-    // setElections([{ title: 'abc' }])
+    // Change page
+    const handlePageChange = (event, newPage) => {
+        setCurrentPage(newPage);
+    };
 
     const statusIcons = {
         Pending: () => <PendingOutlinedIcon />,
         Registration: () => <HowToRegIcon />,
         Ongoing: () => <HowToVoteIcon />,
-        Paused: () => <PauseIcon />,
         Finished: () => <DoneIcon />
     }
 
 
-    const status = 'Pending' // Dummy value
 
     return (
         <Paper
@@ -153,16 +184,40 @@ const Elections = () => {
             <Typography level="h4" sx={{ marginLeft: "5px", marginBottom: "2vh", }}>
                 {isAdmin && "Admin: "}Elections
             </Typography>
-            <FilterSort elections={elections} />
+            <Stack
+                // direction='row'
+                gap={2}
+                display='flex'
+                flexDirection='row'
+                alignItems='baseline'
+            >
+
+                <FilterSort elections={currentElections} />
+
+
+                {/* Pagination */}
+                <Pagination
+                    count={Math.ceil(elections.length / electionsPerPage)}
+                    page={currentPage}
+                    onChange={handlePageChange}
+                    // variant="outlined"
+                    shape="rounded"
+                    showFirstButton
+                    showLastButton
+                    color='standard'
+                />
+            </Stack>
+
             <Grid
                 container
                 spacing={2}
                 direction="row"
                 justifyContent="flex-start"
                 alignItems="center"
+                sx={{ mb: 2.5 }}
             // sx={{ marginLeft: "30px", marginRight: "35px" }}
             >
-                {elections.map((election, index) => (
+                {currentElections.map((election, index) => (
                     <Grid
                         key={index}
                         xs={12}
@@ -206,7 +261,6 @@ const Elections = () => {
                                     <AvatarGroup size='lg' >
                                         <Avatar src="/static/images/avatar/2.jpg" />
                                         <Avatar src="/static/images/avatar/3.jpg" />
-                                        <Avatar src="/static/images/avatar/4.jpg" />
                                         <Avatar>···</Avatar>
                                         {/* <Avatar>...</Avatar> */}
                                     </AvatarGroup>
@@ -216,10 +270,7 @@ const Elections = () => {
                                     </Typography>
 
 
-                                    {/* </Box> */}
-                                    {/* <Typography level="body-md" sx={{ color: 'CaptionText' }}>
-                                        Election description
-                                    </Typography> */}
+
                                 </Box>
 
                                 <List>
@@ -300,9 +351,6 @@ const Elections = () => {
                                     </ListItem>
                                 </List>
 
-                                {/* <Typography level="body-md" sx={{ color: 'CaptionText' }}>
-                                    Election description
-                                </Typography> */}
 
                             </CardContent>
 
@@ -351,7 +399,9 @@ const Elections = () => {
                     </Fab>
                 </Zoom>
             }
-        </Paper>
+
+
+        </Paper >
     );
 }
 

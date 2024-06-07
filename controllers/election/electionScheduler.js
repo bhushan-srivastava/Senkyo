@@ -1,5 +1,6 @@
 import cron from 'node-cron';
 import Elections from "../../models/election/election.model.js"
+import calculateResult from './results.js';
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
@@ -50,13 +51,12 @@ async function endRegistration() {
 async function startVoting() {
     try {
         const elections = await Elections.find({
-            status: 'Ongoing',
             votingStart: { $gte: today, $lt: tomorrow } // Find elections where voting is scheduled to start now
         });
 
         // Update the status of elections to 'Voting'
         for (const election of elections) {
-            election.status = 'Voting';
+            election.status = 'Ongoing';
             await election.save();
             console.log(`Voting started for election: ${election.title}`);
         }
@@ -69,13 +69,15 @@ async function startVoting() {
 async function endVoting() {
     try {
         const elections = await Elections.find({
-            status: 'Voting',
+            status: 'Ongoing',
             votingEnd: { $gte: yesterday, $lt: today } // Find elections where voting is scheduled to end now
         });
 
         // Update the status of elections to 'Finished'
         for (const election of elections) {
             election.status = 'Finished';
+            election.resultDeclared = true;
+            election.result = calculateResult(election);
             await election.save();
             console.log(`Voting ended for election: ${election.title}`);
         }

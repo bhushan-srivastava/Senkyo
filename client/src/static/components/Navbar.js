@@ -64,9 +64,9 @@ const Navbar = () => {
             {isMobile && (
               <IconButton
                 size="large"
-                edge="end"
+                edge="start"
                 aria-label="menu"
-                sx={{ ml: 2 }}
+                sx={{ mr: 5 }}
                 onClick={handleMenuToggle}
               >
                 <MenuIcon />
@@ -110,6 +110,9 @@ const Navbar = () => {
                   <MenuButton
                     variant="plain"
                     size='lg'
+                    sx={{
+                      mr: 5
+                    }}
                   >
                     Voter
                   </MenuButton>
