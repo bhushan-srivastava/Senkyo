@@ -53,6 +53,14 @@ const userSchema = Schema({
             message: 'Invalid Division'
         }
     },
+    "gender": {
+        type: String,
+        required: [true, 'Gender is required'],
+        enum: {
+            values: ['Male', 'Female'],
+            message: 'Invalid Division'
+        }
+    },
     "imgCode": {
         type: String,
         required: [true, 'User\'s image is required']

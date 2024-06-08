@@ -5,11 +5,11 @@ import { Router } from "express";
 
 const electionRouter = Router();
 
-electionRouter.route('/?page&limit').get(requireAuth, getUser, getAllElections);
+electionRouter.route('/').get(requireAuth, getUser, getAllElections);
 
 electionRouter.route('/:id').get(requireAuth, getUser, getElectionByID);
 
-electionRouter.route('/:id').post(requireAuth, getUser, createElection);
+electionRouter.route('/').post(requireAuth, getUser, createElection);
 
 electionRouter.route('/:id').put(requireAuth, getUser, adminUpdateElection);
 

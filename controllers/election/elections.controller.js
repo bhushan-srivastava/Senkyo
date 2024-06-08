@@ -1,4 +1,6 @@
+import mongoose from "mongoose";
 import Elections from "../../models/election/election.model.js"
+import Users from "../../models/user/user.model.js"
 import calculateResult from './results.js'
 
 async function getAllElections(req, res) {
@@ -10,13 +12,13 @@ async function getAllElections(req, res) {
         // Check if the request is from a voter
         if (!req.body.isAdmin) {
             // If it's a voter, filter elections based on course and division
-            dbQuery.course = req.body.user.course;
-            dbQuery.division = req.body.user.division;
+            dbQuery.courses = { $in: [req.body.user.course] }
+            dbQuery.divisions = { $in: [req.body.user.division] }
         }
 
         // Determine pagination parameters
         const page = parseInt(req.query.page) || 1; // Current page number, default to 1 if not provided
-        const limit = parseInt(req.query.limit) || 5; // Number of elections per page, default to 5 if not provided
+        const limit = parseInt(req.query.limit) || 4; // Number of elections per page, default to 4 if not provided
 
         // Calculate the index of the first election for the current page
         const startIndex = (page - 1) * limit;
@@ -32,14 +34,14 @@ async function getAllElections(req, res) {
                   options: { limit: 2 } // Limit to the first 2 candidates per election
               })
               .populate({
-                  path: 'candidates.candidateID',
+                  path: 'candidates',
                   select: 'imgCode'
               })
   */
 
         // Query elections from the database with pagination
         elections = await Elections.aggregate([
-            { $match: dbQuery }, // Match the elections based on the query
+            { $match: {} }, // Match the elections based on the query
             { $project: { description: 0 } }, // Exclude the description field
             { $skip: startIndex }, // Skip elections before the current page
             { $limit: limit }, // Limit the number of elections per page
@@ -51,19 +53,19 @@ async function getAllElections(req, res) {
                     as: 'candidatesData' // The alias for the joined data
                 }
             },
-            { $unwind: '$candidatesData' }, // Unwind the candidates array
+            // { $unwind: '$candidatesData' }, // Unwind the candidates array
             {
                 $project: {
                     title: 1,
                     numberOfWinners: 1,
-                    course: 1,
-                    division: 1,
+                    courses: 1,
+                    divisions: 1,
+                    genders: 1,
                     status: 1,
                     registrationStart: 1,
                     registrationEnd: 1,
                     votingStart: 1,
                     votingEnd: 1,
-                    resultDeclared: 1,
                     candidateImages: { $slice: ['$candidatesData.imgCode', 2] } // Get the images of the first 2 candidates
                 }
             }
@@ -80,24 +82,49 @@ async function getAllElections(req, res) {
 
 async function getElectionByID(req, res) {
     try {
-        const { electionID } = req.params;
+
+        const { id } = req.params;
 
         // Find the election by ID and populate the candidates' data
-        const election = await Elections.findById(electionID)
-            .populate({
-                path: 'candidates.candidateID',
-                select: 'name imgCode' // Select only the name and image code of the candidate
-            });
+        const election = await Elections.findById(id);
 
         if (!election) {
             return res.status(404).json({ message: "Election not found" });
         }
 
-        // Otherwise, return the election data without results
-        return res.satus(200).json({ election });
+        // check if the voter is allowed to access the requested election
+        if (!req.body.isAdmin) {
+            if (!election.courses.includes(req.body.user.course) || !election.divisions.includes(req.body.user.division)) {
+                return res.status(403).json({ message: "You are not allowed to access this election" });
+            }
+        }
+
+        const formattedCandidates = await Promise.all(election.candidates.map(async (candidate) => {
+            const user = await Users.findById(candidate.candidateID);
+            const candidateData = {
+                _id: candidate._id,
+                name: user.name,
+                email: user.email,
+                imgCode: user.imgCode,
+            };
+            if (election.status == 'Finished') {
+                candidateData.noOfVotesReceived = candidate.noOfVotesReceived;
+            }
+            return candidateData;
+        }));
+
+        const formattedVoters = election.votersWhoHaveVoted.map(voter => voter.voterID);
+
+        const formattedElection = {
+            ...election.toObject(),
+            candidates: formattedCandidates,
+            votersWhoHaveVoted: formattedVoters
+        };
+
+        res.status(200).json(formattedElection);
     } catch (error) {
         console.error("Error retrieving election by ID:", error);
-        return res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: "Internal server error" });
     }
 }
 
@@ -110,19 +137,21 @@ async function createElection(req, res) {
         }
 
         // Extract data from request body
-        const { title, description, numberOfWinners, course, division, registrationStart, registrationEnd, votingStart, votingEnd } = req.body;
+        let { title, description, numberOfWinners, courses, divisions, genders, registrationStart, registrationEnd, votingStart, votingEnd } = req.body;
 
         registrationStart = new Date(registrationStart);
         registrationEnd = new Date(registrationEnd);
         votingStart = new Date(votingStart);
         votingEnd = new Date(votingEnd);
 
+
+        // console.log(registrationStart, registrationEnd, votingStart, votingEnd);
         const today = new Date();
 
-        registrationStart.setHours(0, 0, 0, 0);
-        registrationEnd.setHours(0, 0, 0, 0);
-        votingStart.setHours(0, 0, 0, 0);
-        votingEnd.setHours(0, 0, 0, 0);
+        // registrationStart.setHours(0, 0, 0, 0);
+        // registrationEnd.setHours(0, 0, 0, 0);
+        // votingStart.setHours(0, 0, 0, 0);
+        // votingEnd.setHours(0, 0, 0, 0);
 
         today.setHours(0, 0, 0, 0);
 
@@ -137,15 +166,15 @@ async function createElection(req, res) {
             title,
             description,
             numberOfWinners,
-            course,
-            division,
+            courses,
+            divisions,
+            genders,
             // status,
             registrationStart,
             registrationEnd,
             votingStart,
             votingEnd,
-            resultDeclared: false, // Set resultDeclared to false by default
-            result: {},
+            // result: {},
             candidates: [], // Initialize candidates array
             votersWhoHaveVoted: [] // Initialize votersWhoHaveVoted array
         });
@@ -179,10 +208,10 @@ async function adminUpdateElection(req, res) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
 
-        const { electionID } = req.params;
+        const { id } = req.params;
 
         // Fetch the current version of the election by ID from the database
-        const election = await Elections.findById(electionID);
+        const election = await Elections.findById(id);
 
         if (!election) {
             return res.status(404).json({ message: "Election not found" });
@@ -196,12 +225,14 @@ async function adminUpdateElection(req, res) {
         const newVotingStart = new Date(updates.votingStart)
         const newVotingEnd = new Date(updates.votingEnd)
 
+
         const today = new Date();
 
-        newRegistrationStart.setHours(0, 0, 0, 0);
-        newRegistrationEnd.setHours(0, 0, 0, 0);
-        newVotingStart.setHours(0, 0, 0, 0);
-        newVotingEnd.setHours(0, 0, 0, 0);
+        // newRegistrationStart.setHours(0, 0, 0, 0);
+        // newRegistrationEnd.setHours(0, 0, 0, 0);
+        // newVotingStart.setHours(0, 0, 0, 0);
+        // newVotingEnd.setHours(0, 0, 0, 0);
+
 
         today.setHours(0, 0, 0, 0);
 
@@ -212,9 +243,9 @@ async function adminUpdateElection(req, res) {
             if (newVotingStart <= today && today < newVotingEnd) {
                 election.status = 'Ongoing';
             }
-            else if (newVotingEnd <= today) {
+            else if (newVotingEnd < today) {
                 election.status = 'Finished';
-                election.result = calculateResult(election);
+                // election.result = calculateResult(election);
             }
             else {
                 election.status = 'Pending';
@@ -230,8 +261,9 @@ async function adminUpdateElection(req, res) {
         election.title = updates.title || election.title;
         election.description = updates.description || election.description;
         election.numberOfWinners = updates.numberOfWinners || election.numberOfWinners;
-        election.course = updates.course || election.course;
-        election.division = updates.division || election.division;
+        election.courses = updates.courses || election.courses;
+        election.divisions = updates.divisions || election.divisions;
+        election.genders = updates.genders || election.genders;
 
         // Save the updated election
         await election.save();
@@ -244,7 +276,7 @@ async function adminUpdateElection(req, res) {
 }
 
 async function voterUpdateElection(req, res) {
-    /* voter use cases via PATCH request to /:electionID
+    /* voter use cases via PATCH request to /:id
      
      * user can register themself 
      * user can withdraw their own registration 
@@ -255,68 +287,107 @@ async function voterUpdateElection(req, res) {
      * see MDN Docs for difference between PUT and PATCH and use ChatGPT for the code for PUT and PATCH
  
     */
-}
 
-export { getAllElections, getElectionByID, createElection, adminUpdateElection, voterUpdateElection }
+    /*
+ 
+     * The action parameter in the request body specifies the action to be performed (register, withdraw, or vote).
+     * Depending on the action, the function performs the corresponding operation and saves the updated election back to the database.
+     * Ensure proper validation and error handling for each action.
+    
+    */
 
-/*
-
-// reference code for adding a vote from ChatGPT
-
-async function addVote(userId, electionId, candidateId) {
     try {
-        // Find the election
-        const election = await Elections.findById(electionId);
+        if (req.body.isAdmin) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        const { id } = req.params;
+        const { action } = req.body;
+
+        // Fetch the election by ID
+        const election = await Elections.findById(id + "");
+
         if (!election) {
-            throw new Error('Elections not found');
+            return res.status(404).json({ message: "Election not found" });
         }
 
-        // Check if the election is ongoing
-        if (election.status !== 'Ongoing') {
-            throw new Error('Voting is not currently ongoing for this election');
+        if (election.status == 'Finished') {
+            return res.status(400).json({ message: 'Election has finished' })
         }
 
-        // Check if the user has already voted
-        const alreadyVoted = election.votersWhoHaveVoted.some(voter => voter.voterID.equals(userId));
-        if (alreadyVoted) {
-            throw new Error('You have already voted in this election');
+        // Ensure the user's course and division are eligible for this election
+        const userCourse = req.body.user.course;
+        const userDivision = req.body.user.division;
+        if (!election.courses.includes(userCourse) || !election.divisions.includes(userDivision)) {
+            return res.status(403).json({ message: "You are not eligible to participate in this election" });
         }
 
-        // Find the candidate
-        const candidate = election.candidates.find(candidate => candidate.candidateID.equals(candidateId));
-        if (!candidate) {
-            throw new Error('Candidate not found');
+        // Perform the action based on the request body
+        switch (action) {
+            case 'register':
+                if (election.status !== 'Registration') {
+                    return res.status(400).json({ message: 'Registration is not ongoing' })
+                }
+
+                if (!election.genders.includes(req.body.user.gender)) {
+                    return res.status(400).json({ message: 'Valid genders for candidates: ' + election.genders })
+                }
+
+                // Register the user as a candidate for the election
+                if (election.candidates.some(candidate => candidate.candidateID.equals(req.body.user._id))) {
+                    return res.status(400).json({ message: "You are already registered as a candidate for this election" });
+                }
+                election.candidates.push({ candidateID: req.body.user._id, noOfVotesReceived: 0 });
+
+                break;
+
+            case 'withdraw':
+                if (election.status !== 'Registration') {
+                    return res.status(400).json({ message: 'Registration/Withdrawal period has finished' })
+                }
+                // Deregister the user as a candidate from the election
+                const index = election.candidates.findIndex(candidate => candidate.candidateID.equals(req.body.user._id));
+                if (index === -1) {
+                    return res.status(400).json({ message: "You are not registered as a candidate for this election" });
+                }
+                election.candidates.splice(index, 1);
+
+                break;
+
+            case 'vote':
+                if (election.status !== 'Ongoing') {
+                    return res.status(400).json({ message: "Voting is not ongoing for this election" });
+                }
+
+                const alreadyVoted = election.votersWhoHaveVoted.some(voter => voter.voterID.equals(req.body.user._id));
+                if (alreadyVoted) {
+                    return res.status(400).json({ message: "You have already voted in this election" });
+                }
+
+                const candidateIndex = election.candidates.findIndex(candidate => candidate.candidateID.equals(req.body.candidateID));
+                if (candidateIndex === -1) {
+                    return res.status(400).json({ message: "Candidate not found" });
+                }
+
+                // Update the number of votes received by the candidate
+                election.candidates[candidateIndex].noOfVotesReceived++;
+                // Add the user to the list of voters who have voted in the election
+                election.votersWhoHaveVoted.push({ voterID: req.body.user._id });
+
+                break;
+
+            default:
+                return res.status(400).json({ message: "Invalid action" });
         }
-
-        // Update the number of votes received by the candidate
-        candidate.noOfVotesReceived++;
-
-        // Add the voter to the list of voters who have voted in the election
-        election.votersWhoHaveVoted.push({ voterID: userId });
 
         // Save the updated election
         await election.save();
 
-        console.log('Vote added successfully');
+        res.status(200).json({ message: action + " performed successfully" });
     } catch (error) {
-        console.error('Error adding vote:', error.message);
+        console.error("Error updating election:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
 }
 
-// Usage example
-const userId = 'user_id_here'; // User's ID
-const electionId = 'election_id_here'; // Elections's ID
-const candidateId = 'candidate_id_here'; // Candidate's ID
-addVote(userId, electionId, candidateId);
-
-
-// In this function:
-
-//     We first find the election by its ID.
-//     We check if the election is ongoing and if the user has already voted in this election.
-//     We find the candidate by their ID and update the noOfVotesReceived field.
-//     We add the user to the list of voters who have voted in the election.
-//     Finally, we save the updated election.
-
-
-*/
+export { getAllElections, getElectionByID, createElection, adminUpdateElection, voterUpdateElection }

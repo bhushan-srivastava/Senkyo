@@ -19,6 +19,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined';
 // import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import EventIcon from '@mui/icons-material/Event';
+import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 
 import BallotOutlinedIcon from '@mui/icons-material/BallotOutlined';
 import PollOutlinedIcon from '@mui/icons-material/PollOutlined';
@@ -29,6 +30,8 @@ import PauseIcon from '@mui/icons-material/Pause';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import DoneIcon from '@mui/icons-material/Done';
+import Groups2OutlinedIcon from '@mui/icons-material/Groups2Outlined';
+import Groups3OutlinedIcon from '@mui/icons-material/Groups3Outlined';
 
 import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
@@ -49,111 +52,111 @@ const Elections = () => {
         {
             title: "Student Council",
             numberOfWinners: 5,
-            course: ["FY MCA", "SY MCA", "FY CMPN"],
-            division: ["A", "B"],
+            courses: ["FY MCA", "SY MCA", "FY CMPN"],
+            divisions: ["A", "B"],
             status: "Pending",
             registrationStart: new Date("2024-06-01"),
             registrationEnd: new Date("2024-06-05"),
             votingStart: new Date("2024-06-07"),
             votingEnd: new Date("2024-06-10"),
-            resultDeclared: false,
+
             candidates: [],
             votersWhoHaveVoted: []
         },
         {
             title: "Class Representative",
             numberOfWinners: 2,
-            course: ["SY CMPN", "BE CMPN"],
-            division: ["A"],
+            courses: ["SY CMPN", "BE CMPN"],
+            divisions: ["A"],
             status: "Registration",
             registrationStart: new Date("2024-05-20"),
             registrationEnd: new Date("2024-05-25"),
             votingStart: new Date("2024-05-27"),
             votingEnd: new Date("2024-06-01"),
-            resultDeclared: false,
+
             candidates: [],
             votersWhoHaveVoted: []
         },
         {
             title: "Department Head",
             numberOfWinners: 1,
-            course: ["TY INFT", "BE INFT"],
-            division: ["B"],
+            courses: ["TY INFT", "BE INFT"],
+            divisions: ["B"],
             status: "Ongoing",
             registrationStart: new Date("2024-05-15"),
             registrationEnd: new Date("2024-05-20"),
             votingStart: new Date("2024-05-22"),
             votingEnd: new Date("2024-05-25"),
-            resultDeclared: false,
+
             candidates: [],
             votersWhoHaveVoted: []
         },
         {
             title: "Club Committee",
             numberOfWinners: 3,
-            course: ["FY INFT", "TY INFT"],
-            division: ["A", "B"],
+            courses: ["FY INFT", "TY INFT"],
+            divisions: ["A", "B"],
             status: "Finished",
             registrationStart: new Date("2024-05-10"),
             registrationEnd: new Date("2024-05-15"),
             votingStart: new Date("2024-05-17"),
             votingEnd: new Date("2024-05-20"),
-            resultDeclared: true,
+
             candidates: [],
             votersWhoHaveVoted: []
         },
         {
             title: "Inter-Department Sports Meet Elections",
             numberOfWinners: 3,
-            course: ["FY CMPN", "FY INFT"],
-            division: ["A"],
+            courses: ["FY CMPN", "FY INFT"],
+            divisions: ["A"],
             registrationStart: new Date("2024-07-01"),
             registrationEnd: new Date("2024-07-05"),
             votingStart: new Date("2024-07-07"),
             votingEnd: new Date("2024-07-10"),
-            resultDeclared: false,
+
             candidates: [],
             votersWhoHaveVoted: []
         },
         {
             title: "Club Committee",
             numberOfWinners: 3,
-            course: ["FY INFT", "TY INFT"],
-            division: ["A", "B"],
+            courses: ["FY INFT", "TY INFT"],
+            divisions: ["A", "B"],
             status: "Finished",
             registrationStart: new Date("2024-05-10"),
             registrationEnd: new Date("2024-05-15"),
             votingStart: new Date("2024-05-17"),
             votingEnd: new Date("2024-05-20"),
-            resultDeclared: true,
+
             candidates: [],
             votersWhoHaveVoted: []
         },
         {
             title: "Department Head",
             numberOfWinners: 1,
-            course: ["TY INFT", "BE INFT"],
-            division: ["B"],
+            courses: ["TY INFT", "BE INFT"],
+            divisions: ["B"],
             status: "Ongoing",
             registrationStart: new Date("2024-05-15"),
             registrationEnd: new Date("2024-05-20"),
             votingStart: new Date("2024-05-22"),
             votingEnd: new Date("2024-05-25"),
-            resultDeclared: false,
+
             candidates: [],
             votersWhoHaveVoted: []
         },
     ];
 
     useEffect(() => {
-        // axios.get(`/api/elections?page=${currentPage}&limit=${electionsPerPage}`)
-        //     .then(response => {
-        //         setElections(response.data);
-        //     })
-        //     .catch(error => {
-        //         console.error('Error fetching elections:', error);
-        //     });
-        setElections(dummyElections)
+        axios.get(`/api/elections?page=${currentPage}&limit=${electionsPerPage}`)
+            .then(response => {
+                setElections(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching elections:', error);
+            });
+        // setElections(dummyElections)
     }, [currentPage, electionsPerPage]);
 
     // Get current elections
@@ -168,9 +171,11 @@ const Elections = () => {
 
     const statusIcons = {
         Pending: () => <PendingOutlinedIcon />,
-        Registration: () => <HowToRegIcon />,
+        // Registration: () => <HowToRegIcon />,
+        Registration: () => <PersonAddAltOutlinedIcon />,
         Ongoing: () => <HowToVoteIcon />,
-        Finished: () => <DoneIcon />
+        Finished: () => <DoneIcon />,
+        // Finished: () => <EmojiEventsOutlinedIcon />
     }
 
 
@@ -288,6 +293,23 @@ const Elections = () => {
 
                                     <ListItem>
                                         <ListItemDecorator>
+                                            <Groups3OutlinedIcon />
+                                        </ListItemDecorator>
+                                        <ListItemContent>
+                                            <Typography level="title-sm">Candidate's Geimport Groups3OutlinedIcon from '@mui/icons-material/Groups3Outlined';
+                                                nders</Typography>
+                                            <Typography level="body-sm">
+                                                {election.genders.map((gender, index) => {
+                                                    if (index < election.genders.length - 1) return (gender += ',');
+                                                    return gender;
+                                                })
+                                                }
+                                            </Typography>
+                                        </ListItemContent>
+                                    </ListItem>
+
+                                    <ListItem>
+                                        <ListItemDecorator>
                                             <CalendarMonthIcon />
                                         </ListItemDecorator>
                                         <ListItemContent>
@@ -338,17 +360,6 @@ const Elections = () => {
                                         </ListItemContent>
                                     </ListItem>
 
-                                    <ListItem>
-                                        <ListItemDecorator>
-                                            <EventIcon />
-                                        </ListItemDecorator>
-                                        <ListItemContent>
-                                            <Typography level="title-sm">Result Declared?</Typography>
-                                            <Typography level="body-sm">
-                                                {election.resultDeclared ? 'Yes' : 'No'}
-                                            </Typography>
-                                        </ListItemContent>
-                                    </ListItem>
                                 </List>
 
 
@@ -361,13 +372,20 @@ const Elections = () => {
                                     sx={{ borderRadius: "6px", color: 'InfoText' }}
 
                                 >
-                                    {
-                                        isAdmin ?
-                                            <ModeEditOutlinedIcon color='fff' />
-                                            :
-                                            <ReadMoreIcon color='fff' />
-                                    }
+
+                                    <ReadMoreIcon color='fff' />
+
                                 </IconButton>
+
+                                {isAdmin && <IconButton
+                                    href='/elections/:electionID/edit'
+                                    variant='solid'
+                                    sx={{ borderRadius: "6px", color: 'InfoText' }}
+
+                                >
+                                    <ModeEditOutlinedIcon color='fff' />
+
+                                </IconButton>}
                             </CardActions>
 
                         </Card>
@@ -392,7 +410,7 @@ const Elections = () => {
                         color='primary'
                         sx={{ borderRadius: '10px', position: "fixed", bottom: '20px', right: '20px' }}
                         borderRadius='6px'
-                        href='/elections/:electionID'
+                        href='/elections/create'
                     >
                         {/* ab */}
                         <AddIcon />

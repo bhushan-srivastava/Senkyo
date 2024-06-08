@@ -5,15 +5,16 @@ function calculateResult(election) {
     // Sort candidates by number of votes received in descending order
     candidates.sort((a, b) => b.noOfVotesReceived - a.noOfVotesReceived);
 
-    // Get the top `numberOfWinners` candidates as winners
-    const winners = candidates.slice(0, numberOfWinners);
 
     // Format the winners' data for the frontend
-    const winnersData = winners.map(candidate => ({
+    const candidatesData = candidates.map(candidate => ({
         name: candidate.candidateID.name,
+        email: candidate.candidateID.email,
         imgCode: candidate.candidateID.imgCode,
         votesReceived: candidate.noOfVotesReceived
     }));
+
+
 
     // Calculate total votes received by each candidate
     const totalVotesByCandidate = candidates.reduce((result, candidate) => {

@@ -27,6 +27,7 @@ const updateVoter = async (req, res) => {
         password,
         course,
         division,
+        gender,
         imgCode,
         verified
     } = req.body
@@ -37,6 +38,7 @@ const updateVoter = async (req, res) => {
         password,
         course,
         division,
+        gender,
         imgCode,
         verified
     }

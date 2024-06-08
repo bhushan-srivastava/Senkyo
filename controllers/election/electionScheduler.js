@@ -1,6 +1,5 @@
 import cron from 'node-cron';
 import Elections from "../../models/election/election.model.js"
-import calculateResult from './results.js';
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
@@ -76,8 +75,7 @@ async function endVoting() {
         // Update the status of elections to 'Finished'
         for (const election of elections) {
             election.status = 'Finished';
-            election.resultDeclared = true;
-            election.result = calculateResult(election);
+            // election.result = calculateResult(election);
             await election.save();
             console.log(`Voting ended for election: ${election.title}`);
         }
@@ -91,3 +89,14 @@ cron.schedule('0 0 * * *', startRegistration); // Everyday at 12:00 AM
 cron.schedule('0 0 * * *', endRegistration); // Everyday at 12:00 AM
 cron.schedule('0 0 * * *', startVoting); // Everyday at 12:00 AM
 cron.schedule('0 0 * * *', endVoting); // Everyday at 12:00 AM
+
+const scheduleElections = async () => {
+    console.log('please wait for scheduling elections');
+    await Promise.all(startRegistration());
+    await Promise.all(endRegistration());
+    await Promise.all(startVoting());
+    await Promise.all(endVoting());
+    console.log('done scheduling elections');
+}
+
+export default scheduleElections;

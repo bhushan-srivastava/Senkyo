@@ -38,7 +38,7 @@ const electionSchema = Schema({
         min: [1, 'There cannot be 0 winners in an election'],
         required: [true, 'Number of Winners is required']
     },
-    "course": {
+    "courses": {
         type: [String],
         required: [true, 'Course is required'],
         enum: {
@@ -50,7 +50,7 @@ const electionSchema = Schema({
             message: 'Invalid Course'
         }
     },
-    "division": {
+    "divisions": {
         type: [String],
         required: [true, 'Division is required'],
         enum: {
@@ -58,33 +58,29 @@ const electionSchema = Schema({
             message: 'Invalid Division'
         }
     },
+    "genders": {
+        type: [String],
+        required: [true, 'Gender is required'],
+        enum: {
+            values: ['Male', 'Female'],
+            message: 'Invalid Gender'
+        }
+    },
     "status": {
         type: String,
-        // required: [true, 'Status is required'],
+        required: [true, 'Status is required'],
         enum: {
-            values: ['Pending', 'Registration', 'Ongoing', 'Finished'],
+            values: ['Pending', 'Registration', 'Ongoing', 'Paused', 'Finished'],
             message: 'Invalid Status'
-        },
+        }
     },
     registrationStart: {
         type: Date,
         required: [true, 'Registration Start Date is required'],
         validate: {
             validator: validator.isDate,
-            message: 'Registration Start Date is invalid'
-        },
-        // validate: {
-        //     validator: function (value) {
-        //         const today = new Date(value)
-        //         today.setHours(0, 0, 0, 0)
-
-        //         return (
-        //             validator.isDate(value)
-        //             && (value > today)
-        //         )
-        //     },
-        //     message: "Registration Start Date cannot be earlier than Today's Date"
-        // }
+            message: "Invalid Registration Start Date"
+        }
     },
     registrationEnd: {
         type: Date,
@@ -103,15 +99,15 @@ const electionSchema = Schema({
         type: Date,
         required: [true, 'Voting Start Date is required'],
         validate: {
-            validate: {
-                validator: function (value) {
-                    return (
-                        validator.isDate(value)
-                        && (value > this.registrationEnd)
-                    )
-                },
-                message: 'Voting can start only after the registration ends'
+            validator: function (value) {
+
+
+                return (
+                    validator.isDate(value)
+                    && (value > this.registrationEnd)
+                )
             },
+            message: 'Voting can start after registraion ends'
         },
     },
     votingEnd: {
@@ -126,21 +122,6 @@ const electionSchema = Schema({
             },
             message: 'Voting End Date cannot be earlier than its Start Date'
         },
-    },
-    resultDeclared: {
-        type: Boolean,
-        default: false,
-        validate: {
-            validator: function (value) {
-                return (
-                    this.value == true && this.status == 'Finished'
-                )
-            },
-            message: "Result can be declared only if the election is finished"
-        }
-    },
-    result: {
-        type: Object,
     },
     candidates: [Candidate], // array of candidates
     // votersWhoHaveVoted: [Users],

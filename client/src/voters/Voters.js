@@ -210,6 +210,14 @@ const Voters = () => {
             valueOptions: ['A', 'B'],
         },
         {
+            field: "gender",
+            headerName: "Gender",
+            width: 100,
+            editable: true,
+            type: "singleSelect",
+            valueOptions: ['Male', 'Female'],
+        },
+        {
             field: "verified",
             headerName: "Verified",
             width: 150,

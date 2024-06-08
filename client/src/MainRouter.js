@@ -8,6 +8,7 @@ import Login from "./auth/authentication/Login"
 import AdminLogin from "./auth/authentication/AdminLogin";
 import ProtectedRoute from "./auth/authorization/ProtectedRoute";
 import ElectionDetails from "./elections/ElectionDetails";
+import CreateEditElection from "./elections/CreateEditElection";
 
 
 const MainRouter = () => {
@@ -36,7 +37,18 @@ const MainRouter = () => {
                         element={<Elections />}
                     />
 
-                    {/* admin and voter */}
+                    {/* only admin */}
+                    <Route
+                        path="/elections/create"
+                        element={<CreateEditElection />}
+                    />
+
+                    {/* only admin  */}
+                    <Route
+                        path="/elections/:electionID/edit"
+                        element={<CreateEditElection />}
+                    />
+                    {/* only admin  */}
                     <Route
                         path="/elections/:electionID"
                         element={<ElectionDetails />}

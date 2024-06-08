@@ -58,7 +58,7 @@ const ElectionFilterDialog = ({ open, handleClose }) => {
             <DialogContent>
                 <Box component="form" sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap' }}>
                     <FormControl sx={{ m: 1, }}>
-                        <InputLabel id="course-select">Course</InputLabel>
+                        <InputLabel id="course-select">Courses</InputLabel>
                         <Select
                             value={filterCriteria.courses}
                             labelId='course-select'
@@ -85,7 +85,7 @@ const ElectionFilterDialog = ({ open, handleClose }) => {
                     </FormControl>
 
                     <FormControl sx={{ m: 1, }}>
-                        <InputLabel id="division-select">Division</InputLabel>
+                        <InputLabel id="division-select">Divisions</InputLabel>
                         <Select
                             value={filterCriteria.divisions}
                             labelId='division-select'

@@ -198,6 +198,7 @@ let userRegister = async (req, res) => {
       password,
       course: req.body.course,
       division: req.body.division,
+      gender: req.body.gender,
       imgCode: req.body.imgCode,
       verified: false,
     };

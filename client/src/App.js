@@ -27,6 +27,9 @@ import MainRouter from "./MainRouter";
 
 import { CssVarsProvider as JoyCssVarsProvider } from '@mui/joy/styles';
 
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+
 function App() {
 
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -41,30 +44,32 @@ function App() {
 
 
   return (
-    <div className="App">
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+
+      <div className="App">
 
 
 
-      <MaterialCssVarsProvider theme={{ [MATERIAL_THEME_ID]: materialTheme }}>
-        <JoyCssVarsProvider>
+        <MaterialCssVarsProvider theme={{ [MATERIAL_THEME_ID]: materialTheme }}>
+          <JoyCssVarsProvider>
 
-          <AntdConfigProvider
-            theme={{
-              // 1. Use dark algorithm
-              algorithm: prefersDarkMode ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
+            <AntdConfigProvider
+              theme={{
+                // 1. Use dark algorithm
+                algorithm: prefersDarkMode ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
 
-            }}
-          >
-            <CssBaseline enableColorScheme />
-            <Navbar />
-            <MainRouter />
+              }}
+            >
+              <CssBaseline enableColorScheme />
+              <Navbar />
+              <MainRouter />
 
-          </AntdConfigProvider>
+            </AntdConfigProvider>
 
-        </JoyCssVarsProvider>
-      </MaterialCssVarsProvider>
+          </JoyCssVarsProvider>
+        </MaterialCssVarsProvider>
 
-      {/* <MaterialCssVarsProvider theme={{ [MATERIAL_THEME_ID]: materialTheme }}>
+        {/* <MaterialCssVarsProvider theme={{ [MATERIAL_THEME_ID]: materialTheme }}>
         <JoyCssVarsProvider>
           <CssBaseline enableColorScheme />
           <MainRouter />
@@ -73,7 +78,9 @@ function App() {
 
 
 
-    </div>
+      </div>
+    </LocalizationProvider>
+
   );
 }
 

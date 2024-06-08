@@ -13,6 +13,8 @@ import authRouter from "./routers/auth/auth.router.js"
 import voterRouter from "./routers/voter/voter.router.js";
 import electionRouter from "./routers/election/election.router.js"
 
+import scheduleElections from './controllers/election/electionScheduler.js'
+
 dotenv.config()
 
 const server = express();
@@ -51,7 +53,7 @@ mongoose.connect(process.env.CONNECTION_STRING)
     .then(() => {
         console.log('Database is connected')
         server.listen(port, () => { console.info(`listening on port ${port}`) })
-
+        scheduleElections();
     })
     .catch((err) => console.log("ERROR in Database connection: ", err))
 

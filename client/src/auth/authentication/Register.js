@@ -37,7 +37,7 @@ const Register = () => {
     PaperProps: {
       style: {
         maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250,
+        width: 120,
       },
     },
   };
@@ -49,6 +49,7 @@ const Register = () => {
   ]
 
   const divisions = ['A', 'B']
+  const genders = ['Male', 'Female']
 
   const videoConstraints = {
     width: 700,
@@ -283,6 +284,25 @@ const Register = () => {
                   >
                     {divisions.map((division, index) =>
                       <MenuItem value={division}>{division}</MenuItem>
+                    )}
+
+                  </Select>
+                </FormControl>
+
+                <FormControl fullWidth>
+                  <InputLabel id="gender-select">Gender</InputLabel>
+                  <Select
+                    labelId="gender-select"
+                    label="Gender"
+                    name="gender"
+                    type="text"
+                    onChange={handleChange}
+                    value={formData.gender}
+                    required
+                    MenuProps={MenuProps}
+                  >
+                    {genders.map((gender, index) =>
+                      <MenuItem value={gender}>{gender}</MenuItem>
                     )}
 
                   </Select>
