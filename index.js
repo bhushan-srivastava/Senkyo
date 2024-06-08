@@ -50,10 +50,12 @@ mongoose.set('strictQuery', true);
 // mongoose.connect(process.env.CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
 mongoose.connect(process.env.CONNECTION_STRING)
 
-    .then(() => {
+    .then(async () => {
         console.log('Database is connected')
+
+        await scheduleElections()
+
         server.listen(port, () => { console.info(`listening on port ${port}`) })
-        scheduleElections();
     })
     .catch((err) => console.log("ERROR in Database connection: ", err))
 

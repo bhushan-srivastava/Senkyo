@@ -41,128 +41,36 @@ import Fab from '@mui/material/Fab';
 
 import { useOutletContext } from "react-router-dom"
 import { Pagination, Paper, Stack } from '@mui/material';
-import FilterSort from './Filter';
+import Filter from './Filter';
+import { message } from "antd";
+
 const Elections = () => {
     const { isAdmin } = useOutletContext();
     const [elections, setElections] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const electionsPerPage = 4; // Number of elections to display per page
 
-    const dummyElections = [
-        {
-            title: "Student Council",
-            numberOfWinners: 5,
-            courses: ["FY MCA", "SY MCA", "FY CMPN"],
-            divisions: ["A", "B"],
-            status: "Pending",
-            registrationStart: new Date("2024-06-01"),
-            registrationEnd: new Date("2024-06-05"),
-            votingStart: new Date("2024-06-07"),
-            votingEnd: new Date("2024-06-10"),
-
-            candidates: [],
-            votersWhoHaveVoted: []
-        },
-        {
-            title: "Class Representative",
-            numberOfWinners: 2,
-            courses: ["SY CMPN", "BE CMPN"],
-            divisions: ["A"],
-            status: "Registration",
-            registrationStart: new Date("2024-05-20"),
-            registrationEnd: new Date("2024-05-25"),
-            votingStart: new Date("2024-05-27"),
-            votingEnd: new Date("2024-06-01"),
-
-            candidates: [],
-            votersWhoHaveVoted: []
-        },
-        {
-            title: "Department Head",
-            numberOfWinners: 1,
-            courses: ["TY INFT", "BE INFT"],
-            divisions: ["B"],
-            status: "Ongoing",
-            registrationStart: new Date("2024-05-15"),
-            registrationEnd: new Date("2024-05-20"),
-            votingStart: new Date("2024-05-22"),
-            votingEnd: new Date("2024-05-25"),
-
-            candidates: [],
-            votersWhoHaveVoted: []
-        },
-        {
-            title: "Club Committee",
-            numberOfWinners: 3,
-            courses: ["FY INFT", "TY INFT"],
-            divisions: ["A", "B"],
-            status: "Finished",
-            registrationStart: new Date("2024-05-10"),
-            registrationEnd: new Date("2024-05-15"),
-            votingStart: new Date("2024-05-17"),
-            votingEnd: new Date("2024-05-20"),
-
-            candidates: [],
-            votersWhoHaveVoted: []
-        },
-        {
-            title: "Inter-Department Sports Meet Elections",
-            numberOfWinners: 3,
-            courses: ["FY CMPN", "FY INFT"],
-            divisions: ["A"],
-            registrationStart: new Date("2024-07-01"),
-            registrationEnd: new Date("2024-07-05"),
-            votingStart: new Date("2024-07-07"),
-            votingEnd: new Date("2024-07-10"),
-
-            candidates: [],
-            votersWhoHaveVoted: []
-        },
-        {
-            title: "Club Committee",
-            numberOfWinners: 3,
-            courses: ["FY INFT", "TY INFT"],
-            divisions: ["A", "B"],
-            status: "Finished",
-            registrationStart: new Date("2024-05-10"),
-            registrationEnd: new Date("2024-05-15"),
-            votingStart: new Date("2024-05-17"),
-            votingEnd: new Date("2024-05-20"),
-
-            candidates: [],
-            votersWhoHaveVoted: []
-        },
-        {
-            title: "Department Head",
-            numberOfWinners: 1,
-            courses: ["TY INFT", "BE INFT"],
-            divisions: ["B"],
-            status: "Ongoing",
-            registrationStart: new Date("2024-05-15"),
-            registrationEnd: new Date("2024-05-20"),
-            votingStart: new Date("2024-05-22"),
-            votingEnd: new Date("2024-05-25"),
-
-            candidates: [],
-            votersWhoHaveVoted: []
-        },
-    ];
-
     useEffect(() => {
-        axios.get(`/api/elections?page=${currentPage}&limit=${electionsPerPage}`)
+        fetch(`/api/elections?page=${currentPage}&limit=${electionsPerPage}`)
             .then(response => {
-                setElections(response.data);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch elections');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setElections(data);
             })
             .catch(error => {
-                console.error('Error fetching elections:', error);
+                message.error('Error fetching elections: ' + error.message);
             });
-        // setElections(dummyElections)
     }, [currentPage, electionsPerPage]);
 
     // Get current elections
     const indexOfLastElection = currentPage * electionsPerPage;
     const indexOfFirstElection = indexOfLastElection - electionsPerPage;
     const currentElections = elections.slice(indexOfFirstElection, indexOfLastElection);
+    // console.log(currentElections);
 
     // Change page
     const handlePageChange = (event, newPage) => {
@@ -197,7 +105,7 @@ const Elections = () => {
                 alignItems='baseline'
             >
 
-                <FilterSort elections={currentElections} />
+                <Filter elections={currentElections} />
 
 
                 {/* Pagination */}
@@ -264,8 +172,11 @@ const Elections = () => {
                                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                     {/* candiates faces as avatars */}
                                     <AvatarGroup size='lg' >
-                                        <Avatar src="/static/images/avatar/2.jpg" />
-                                        <Avatar src="/static/images/avatar/3.jpg" />
+                                        {
+                                            election.candidatesImages.map(
+                                                (candidateImage, index) => <Avatar src={candidateImage} variant="outlined" />)
+
+                                        }
                                         <Avatar>···</Avatar>
                                         {/* <Avatar>...</Avatar> */}
                                     </AvatarGroup>
@@ -293,33 +204,16 @@ const Elections = () => {
 
                                     <ListItem>
                                         <ListItemDecorator>
-                                            <Groups3OutlinedIcon />
-                                        </ListItemDecorator>
-                                        <ListItemContent>
-                                            <Typography level="title-sm">Candidate's Geimport Groups3OutlinedIcon from '@mui/icons-material/Groups3Outlined';
-                                                nders</Typography>
-                                            <Typography level="body-sm">
-                                                {election.genders.map((gender, index) => {
-                                                    if (index < election.genders.length - 1) return (gender += ',');
-                                                    return gender;
-                                                })
-                                                }
-                                            </Typography>
-                                        </ListItemContent>
-                                    </ListItem>
-
-                                    <ListItem>
-                                        <ListItemDecorator>
                                             <CalendarMonthIcon />
                                         </ListItemDecorator>
                                         <ListItemContent>
                                             <Typography level="title-sm">Registration Dates</Typography>
                                             <Typography level="body-sm">
-                                                {election.registrationStart.toLocaleDateString('en-GB', {
+                                                {new Date(election.registrationStart).toLocaleDateString('en-GB', {
                                                     day: '2-digit',
                                                     month: '2-digit',
                                                     year: '2-digit'
-                                                }) + ' - ' + election.registrationEnd.toLocaleDateString('en-GB', {
+                                                }) + ' - ' + new Date(election.registrationEnd).toLocaleDateString('en-GB', {
                                                     day: '2-digit',
                                                     month: '2-digit',
                                                     year: '2-digit'
@@ -335,15 +229,31 @@ const Elections = () => {
                                         <ListItemContent>
                                             <Typography level="title-sm">Voting Dates</Typography>
                                             <Typography level="body-sm">
-                                                {election.votingStart.toLocaleDateString('en-GB', {
+                                                {new Date(election.votingStart).toLocaleDateString('en-GB', {
                                                     day: '2-digit',
                                                     month: '2-digit',
                                                     year: '2-digit'
-                                                }) + ' - ' + election.votingEnd.toLocaleDateString('en-GB', {
+                                                }) + ' - ' + new Date(election.votingEnd).toLocaleDateString('en-GB', {
                                                     day: '2-digit',
                                                     month: '2-digit',
                                                     year: '2-digit'
                                                 })}
+                                            </Typography>
+                                        </ListItemContent>
+                                    </ListItem>
+
+                                    <ListItem>
+                                        <ListItemDecorator>
+                                            <Groups3OutlinedIcon />
+                                        </ListItemDecorator>
+                                        <ListItemContent>
+                                            <Typography level="title-sm">Candidate's Genders</Typography>
+                                            <Typography level="body-sm">
+                                                {election.genders.map((gender, index) => {
+                                                    if (index < election.genders.length - 1) return (gender += ',');
+                                                    return gender;
+                                                })
+                                                }
                                             </Typography>
                                         </ListItemContent>
                                     </ListItem>
@@ -366,26 +276,28 @@ const Elections = () => {
                             </CardContent>
 
                             <CardActions sx={{ mt: -2, alignItems: "center", display: 'flex', flexDirection: 'column' }} >
-                                <IconButton
-                                    href='/elections/:electionID'
-                                    variant='solid'
-                                    sx={{ borderRadius: "6px", color: 'InfoText' }}
+                                <Stack direction='row' gap='2'>
+                                    <IconButton
+                                        href={`/elections/${election._id}`}
+                                        variant='solid'
+                                        sx={{ borderRadius: "6px", color: 'InfoText', mr: 2 }}
 
-                                >
+                                    >
 
-                                    <ReadMoreIcon color='fff' />
+                                        <ReadMoreIcon color='fff' />
 
-                                </IconButton>
+                                    </IconButton>
 
-                                {isAdmin && <IconButton
-                                    href='/elections/:electionID/edit'
-                                    variant='solid'
-                                    sx={{ borderRadius: "6px", color: 'InfoText' }}
+                                    {isAdmin && <IconButton
+                                        href={`/elections/${election._id}/edit`}
+                                        variant='solid'
+                                        sx={{ borderRadius: "6px", color: 'InfoText' }}
 
-                                >
-                                    <ModeEditOutlinedIcon color='fff' />
+                                    >
+                                        <ModeEditOutlinedIcon color='fff' />
 
-                                </IconButton>}
+                                    </IconButton>}
+                                </Stack>
                             </CardActions>
 
                         </Card>

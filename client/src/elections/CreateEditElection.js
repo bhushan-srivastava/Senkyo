@@ -1,5 +1,5 @@
 import Typography from "@mui/joy/Typography";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
     Box,
@@ -16,6 +16,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { message } from "antd";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import Autocomplete from '@mui/material/Autocomplete';
+import dayjs from "dayjs";
 
 const CreateEditElection = () => {
     const ITEM_HEIGHT = 48;
@@ -37,10 +38,10 @@ const CreateEditElection = () => {
         divisions: [],
         genders: [],
         status: "Pending",
-        registrationStart: null,
-        registrationEnd: null,
-        votingStart: null,
-        votingEnd: null,
+        registrationStart: dayjs(),
+        registrationEnd: dayjs(),
+        votingStart: dayjs(),
+        votingEnd: dayjs()
     });
 
     const navigate = useNavigate();
@@ -48,29 +49,38 @@ const CreateEditElection = () => {
     const { electionID } = useParams();
 
     useEffect(() => {
-        if (isAdmin) {
-            if (electionID) {
-                // Fetch election data based on the electionID
-                fetch(`/api/elections/${electionID}`)
-                    .then(response => {
-                        if (response.status != 200) {
-                            throw new Error('Failed to fetch election data');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        // Update state with the fetched election data
-                        setFormData(data);
-                    })
-                    .catch(error => {
-                        message.error(error);
-                    });
-            }
+        if (isAdmin && electionID) {
+            // Fetch election data based on the electionID
+            fetch(`/api/elections/${electionID}`)
+                .then(response => {
+                    if (response.status != 200) {
+                        throw new Error('Failed to fetch election data');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // data.registrationStart = new Date(data.registrationStart);
+                    // data.registrationEnd = new Date(data.registrationEnd);
+                    // data.votingStart = new Date(data.votingStart);
+                    // data.votingEnd = new Date(data.votingEnd);
+
+                    data.registrationStart = dayjs(data.registrationStart);
+                    data.registrationEnd = dayjs(data.registrationEnd);
+                    data.votingStart = dayjs(data.votingStart);
+                    data.votingEnd = dayjs(data.votingEnd);
+
+                    // Update state with the fetched election data
+                    console.log(data);
+                    setFormData(data);
+                })
+                .catch(error => {
+                    message.error(error.message);
+                });
         }
         else {
             navigate('/elections')
         }
-    }, [electionID]); // Fetch data whenever the electionID parameter changes
+    }, []);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -105,36 +115,60 @@ const CreateEditElection = () => {
         }
 
         try {
-            const response = await fetch("/api/elections/" + electionID, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
-            });
+            // console.log(formData);
+            let response;
+            if (!electionID) {
+                // create
+                response = await fetch("/api/elections", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formData),
+                });
+            }
+            else {
+                // edit
+                response = await fetch("/api/elections/" + electionID, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formData),
+                });
+            }
+
 
             const responseData = await response.json();
 
             //if elections was created successfully
-            if (response.status === 201) {
-                message.success("Election created successfully");
+            if (response.status === 201 || response.status === 200) {
+                if (!electionID) {
+                    // created
+                    message.success("Election created successfully");
+                } else {
+                    // saved
+                    message.success(responseData.election.title + " saved successfully");
+                }
                 navigate("/elections");
             } else {
                 //Displaying error messages from backend in case of failed attempt
-                const data = await response.json();
-                message.error(data.message, 10);
+
+                message.error(responseData.message, 10);
             }
         } catch (error) {
+            console.log(error);
             message.error(error.message);
         }
     };
 
     return (
+
         isAdmin ?
             <Paper variant="outlined">
                 <br />
                 <Typography level="h3" sx={{ textAlign: 'center', mb: 2 }}>
-                    {electionID ? "Edit" : "Create"}Election
+                    {electionID ? "Edit " : "Create "}Election
                 </Typography>
 
                 {/* Form */}
@@ -236,7 +270,7 @@ const CreateEditElection = () => {
                                     />
                                 </FormControl>
                             </Grid>
-                            <Grid item xs={12}>
+                            {electionID && <Grid item xs={12}>
                                 <FormControl fullWidth>
                                     <Autocomplete
                                         id="select-status"
@@ -256,7 +290,7 @@ const CreateEditElection = () => {
                                         renderInput={(params) => <TextField {...params} label="Status" />}
                                     />
                                 </FormControl>
-                            </Grid>
+                            </Grid>}
                             <Grid item xs={12}>
                                 <Stack direction="row" spacing={3}
                                     justifyContent='space-between'>

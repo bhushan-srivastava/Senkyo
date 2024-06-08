@@ -1,11 +1,9 @@
-import mongoose from "mongoose";
 import Elections from "../../models/election/election.model.js"
 import Users from "../../models/user/user.model.js"
-import calculateResult from './results.js'
 
 async function getAllElections(req, res) {
     try {
-        let elections;
+        // let elections;
 
         let dbQuery = {};
 
@@ -24,53 +22,22 @@ async function getAllElections(req, res) {
         const startIndex = (page - 1) * limit;
 
         // Query elections from the database with pagination
-        /*  elections = await Elections.find(dbQuery)
-              .select('-description') // Exclude the description field
-              .skip(startIndex) // Skip elections before the current page
-              .limit(limit) // Limit the number of elections per page
-              .populate({
-                  path: 'candidates',
-                  select: 'candidateID',
-                  options: { limit: 2 } // Limit to the first 2 candidates per election
-              })
-              .populate({
-                  path: 'candidates',
-                  select: 'imgCode'
-              })
-  */
+        const elections = await Elections.find(dbQuery)
+            .select('-description -votersWhoHaveVoted -courses -divisions') // Exclude the description field
+            .skip(startIndex) // Skip elections before the current page
+            .limit(limit) // Limit the number of elections per page
+            .populate({
+                path: 'candidates.candidateID',
+                model: 'users',
+                select: 'imgCode'
+            })
+            .lean(); // Convert Mongoose documents to plain JavaScript objects
 
-        // Query elections from the database with pagination
-        elections = await Elections.aggregate([
-            { $match: {} }, // Match the elections based on the query
-            { $project: { description: 0 } }, // Exclude the description field
-            { $skip: startIndex }, // Skip elections before the current page
-            { $limit: limit }, // Limit the number of elections per page
-            {
-                $lookup: {
-                    from: 'users', // The collection to join with
-                    localField: 'candidates.candidateID', // The field from the current collection
-                    foreignField: '_id', // The field from the joined collection
-                    as: 'candidatesData' // The alias for the joined data
-                }
-            },
-            // { $unwind: '$candidatesData' }, // Unwind the candidates array
-            {
-                $project: {
-                    title: 1,
-                    numberOfWinners: 1,
-                    courses: 1,
-                    divisions: 1,
-                    genders: 1,
-                    status: 1,
-                    registrationStart: 1,
-                    registrationEnd: 1,
-                    votingStart: 1,
-                    votingEnd: 1,
-                    candidateImages: { $slice: ['$candidatesData.imgCode', 2] } // Get the images of the first 2 candidates
-                }
-            }
-        ]);
-
+        // Process the candidates' images
+        elections.forEach(election => {
+            election.candidatesImages = election.candidates.slice(0, 2).map(candidate => candidate.candidateID.imgCode);
+            delete election.candidates; // Remove the candidates field
+        });
 
         res.status(200).json(elections);
     } catch (error) {
@@ -86,7 +53,8 @@ async function getElectionByID(req, res) {
         const { id } = req.params;
 
         // Find the election by ID and populate the candidates' data
-        const election = await Elections.findById(id);
+        const election = await Elections.findById(id)
+            .select('-__v -createdAt -updatedAt');
 
         if (!election) {
             return res.status(404).json({ message: "Election not found" });
@@ -276,25 +244,6 @@ async function adminUpdateElection(req, res) {
 }
 
 async function voterUpdateElection(req, res) {
-    /* voter use cases via PATCH request to /:id
-     
-     * user can register themself 
-     * user can withdraw their own registration 
-     * user's course and division should be present in the election's courses[] and divisions[]
-     
-     * user can give their vote
-     * user can vote only once per election (check reference code below)
-     * see MDN Docs for difference between PUT and PATCH and use ChatGPT for the code for PUT and PATCH
- 
-    */
-
-    /*
- 
-     * The action parameter in the request body specifies the action to be performed (register, withdraw, or vote).
-     * Depending on the action, the function performs the corresponding operation and saves the updated election back to the database.
-     * Ensure proper validation and error handling for each action.
-    
-    */
 
     try {
         if (req.body.isAdmin) {
