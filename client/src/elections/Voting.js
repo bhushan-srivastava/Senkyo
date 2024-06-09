@@ -14,6 +14,7 @@ import Box from "@mui//joy/Box";
 import { useState } from "react";
 import Button from "@mui/material/Button"
 import { message } from "antd"
+
 const Voting = ({ electionDetails }) => {
     const [checkedValues, setCheckedValues] = useState([]);
 

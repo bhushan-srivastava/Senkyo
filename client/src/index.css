@@ -10,6 +10,15 @@ video {
     padding: 3px;
 }
 
+.winner-card {
+    margin: 10px;
+    width: 345px;
+}
+
+.winner-card-media {
+    height: 140px;
+}
+
 .ant-message {
     top: auto !important;
     bottom: 20px !important;

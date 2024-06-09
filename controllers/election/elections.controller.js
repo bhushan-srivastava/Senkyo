@@ -313,13 +313,20 @@ async function voterUpdateElection(req, res) {
                     return res.status(400).json({ message: "You have already voted in this election" });
                 }
 
-                const candidateIndex = election.candidates.findIndex(candidate => candidate.candidateID.equals(req.body.candidateID));
-                if (candidateIndex === -1) {
-                    return res.status(400).json({ message: "Candidate not found" });
+                if (req.body.candidates.length > election.numberOfWinners) {
+                    return res.status(400).json({ message: "You cannot vote for more than " + election.numberOfWinners + " candidates" })
                 }
 
-                // Update the number of votes received by the candidate
-                election.candidates[candidateIndex].noOfVotesReceived++;
+                for (cd of req.body.candidates) {
+
+                    const candidateIndex = election.candidates.findIndex(candidate => candidate.candidateID.equals(cd));
+                    if (candidateIndex === -1) {
+                        return res.status(400).json({ message: "Candidate not found" });
+                    }
+
+                    // Update the number of votes received by the candidate
+                    election.candidates[candidateIndex].noOfVotesReceived++;
+                }
                 // Add the user to the list of voters who have voted in the election
                 election.votersWhoHaveVoted.push({ voterID: req.body.user._id });
 
