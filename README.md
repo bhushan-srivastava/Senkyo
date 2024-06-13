@@ -1,2 +1,2 @@
-# Vote
-Blockchain voting project
+# Senkyo
+Online voting project
