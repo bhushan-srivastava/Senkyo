@@ -2,7 +2,7 @@
   "name": "server",
   "version": "1.0.0",
   "type": "module",
-  "description": "Blockchain voting",
+  "description": "Online voting",
   "main": "index.js",
   "scripts": {
     "start": "node index",

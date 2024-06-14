@@ -229,7 +229,7 @@ const Register = () => {
               )}
             </Box>
             <Stack spacing={2} sx={{ width: { xs: "100%", sm: "50%" } }}>
-              <Typography variant="h5" component='h1'>Join EtherBallot.</Typography>
+              <Typography variant="h5" component='h1'>Join Senkyo.</Typography>
 
               <TextField
                 label="Email"

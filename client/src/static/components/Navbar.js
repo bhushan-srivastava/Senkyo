@@ -56,7 +56,7 @@ const Navbar = () => {
               color='neutral'
             >
               {/* <img className='logo' src={logo} alt='logo'></img> */}
-              EtherBallot
+              Senkyo
             </JoyUiLink>
             {/* </Typography> */}
           </div>
