@@ -159,7 +159,7 @@ const Filter = () => {
     };
 
     return (
-        <div style={{ marginBottom: '10px' }}>
+        <div style={{ marginBottom: '10px', }}>
             <IconButton onClick={handleClickOpen} sx={{ borderRadius: "6px", color: 'InfoText' }}>
                 <FilterListIcon />
             </IconButton>

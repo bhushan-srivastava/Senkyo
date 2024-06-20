@@ -107,7 +107,7 @@ const electionSchema = Schema({
                     && (value > this.registrationEnd)
                 )
             },
-            message: 'Voting can start after registraion ends'
+            message: 'Voting can start after registration ends'
         },
     },
     votingEnd: {

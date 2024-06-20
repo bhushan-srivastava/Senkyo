@@ -268,7 +268,7 @@ const Voters = () => {
 
                 <Paper variant="outlined" sx={{ border: 'none', marginRight: '3vw' }}>
                     <br />
-                    <Typography level="h4" sx={{ marginLeft: "5px", marginBottom: "2vh", }}>
+                    <Typography level="h4" sx={{ marginLeft: "5px", marginBottom: "2vh", textAlign: 'center' }}>
                         Admin: Voters Panel
                     </Typography>
 

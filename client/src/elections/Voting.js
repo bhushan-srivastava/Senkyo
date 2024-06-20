@@ -32,7 +32,7 @@ const Voting = ({ electionDetails }) => {
             }
             else {
                 event.preventDefault();
-                message.warning('Cannot choose more than ' + maxChecked + ' candidates', 5)
+                message.warning('You cannot vote for more than ' + maxChecked + ' candidates in this election', 8)
             }
         } else {
             setCheckedValues((prevCheckedValues) =>
@@ -54,7 +54,8 @@ const Voting = ({ electionDetails }) => {
                     display: 'flex',
                     flexDirection: 'row',
                     flexWrap: 'wrap',
-                    gap: 2
+                    gap: 2,
+                    justifyContent: 'center'
                 }}
             >
                 {
@@ -62,7 +63,7 @@ const Voting = ({ electionDetails }) => {
                         const isChecked = checkedValues.includes(value);
                         return <ListItem
                             key={value}
-
+                            variant={isChecked ? "soft" : "outlined"}
                             sx={{
                                 borderRadius: 'md',
                                 // boxShadow: 'sm',

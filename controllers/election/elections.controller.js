@@ -56,6 +56,7 @@ async function getElectionByID(req, res) {
         const election = await Elections.findById(id)
             .select('-__v -createdAt -updatedAt');
 
+
         if (!election) {
             return res.status(404).json({ message: "Election not found" });
         }
@@ -80,6 +81,8 @@ async function getElectionByID(req, res) {
             }
             return candidateData;
         }));
+
+        formattedCandidates.sort((candidate1, candidate2) => candidate1.noOfVotesReceived - candidate2.noOfVotesReceived)
 
         const formattedVoters = election.votersWhoHaveVoted.map(voter => voter.voterID);
 

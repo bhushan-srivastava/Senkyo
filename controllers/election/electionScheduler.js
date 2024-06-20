@@ -7,7 +7,7 @@ today.setHours(0, 0, 0, 0);
 const yesterday = new Date(today.getTime() - (24 * 60 * 60 * 1000));
 
 const tomorrow = new Date(today.getTime() + (24 * 60 * 60 * 1000));
-
+console.log(yesterday, today, tomorrow);
 // Define a function to handle registration start
 async function startRegistration() {
     try {
@@ -79,11 +79,11 @@ async function endVoting() {
 }
 
 
-// Schedule tasks using cron expressions
-cron.schedule('0 0 * * *', startRegistration); // Everyday at 12:00 AM
-cron.schedule('0 0 * * *', endRegistration); // Everyday at 12:00 AM
-cron.schedule('0 0 * * *', startVoting); // Everyday at 12:00 AM
-cron.schedule('0 0 * * *', endVoting); // Everyday at 12:00 AM
+// // Schedule tasks using cron expressions
+// cron.schedule('0 0 * * *', startRegistration); // Everyday at 12:00 AM
+// cron.schedule('0 0 * * *', endRegistration); // Everyday at 12:00 AM
+// cron.schedule('0 0 * * *', startVoting); // Everyday at 12:00 AM
+// cron.schedule('0 0 * * *', endVoting); // Everyday at 12:00 AM
 
 const scheduleElections = async () => {
     console.log('please wait for scheduling elections');

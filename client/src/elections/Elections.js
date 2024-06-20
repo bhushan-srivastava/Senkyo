@@ -91,51 +91,42 @@ const Elections = () => {
     return (
         <Paper
             variant='outlined'
-            sx={{ marginLeft: "30px", marginRight: "35px", border: 'none' }}
+            sx={{ marginLeft: "30px", marginRight: "35px", border: 'none', mt: 0, display: 'flex', flexDirection: 'column', flexWrap: 'wrap', alignItems: 'center' }}
         >
             <br />
-            <Typography level="h4" sx={{ marginLeft: "5px", marginBottom: "2vh", }}>
-                {isAdmin && "Admin: "}Elections
-            </Typography>
+
             <Stack
                 // direction='row'
                 gap={2}
                 display='flex'
                 flexDirection='row'
-                alignItems='baseline'
+                alignItems='flex-end'
             >
+                <Typography level="h4" sx={{ marginLeft: "5px", marginBottom: "2vh", }}>
+                    {isAdmin && "Admin: "}Elections
 
+                </Typography>
                 <Filter elections={currentElections} />
 
 
-                {/* Pagination */}
-                <Pagination
-                    count={Math.ceil(elections.length / electionsPerPage)}
-                    page={currentPage}
-                    onChange={handlePageChange}
-                    // variant="outlined"
-                    shape="rounded"
-                    showFirstButton
-                    showLastButton
-                    color='standard'
-                />
+
             </Stack>
 
             <Grid
                 container
                 spacing={2}
                 direction="row"
-                justifyContent="flex-start"
+                justifyContent="center"
                 alignItems="center"
-                sx={{ mb: 2.5 }}
+                sx={{ mb: 1 }}
             // sx={{ marginLeft: "30px", marginRight: "35px" }}
             >
                 {currentElections.map((election, index) => (
                     <Grid
                         key={index}
-                        xs={12}
-                        sm={6}
-                        md={3}
+                        // xs={12}
+                        // sm={6}
+                        // md={3}
                         display="flex"
                         justifyContent="flex-start"
                         alignItems="center"
@@ -189,7 +180,7 @@ const Elections = () => {
 
                                 </Box>
 
-                                <List>
+                                <List sx={{ flexWrap: 'wrap', alignContent: 'center' }}>
                                     <ListItem>
                                         <ListItemDecorator>
                                             {statusIcons[election.status]()}
@@ -250,7 +241,7 @@ const Elections = () => {
                                             <Typography level="title-sm">Candidate's Genders</Typography>
                                             <Typography level="body-sm">
                                                 {election.genders.map((gender, index) => {
-                                                    if (index < election.genders.length - 1) return (gender += ',');
+                                                    if (index < election.genders.length - 1) return (gender += ', ');
                                                     return gender;
                                                 })
                                                 }
@@ -330,6 +321,18 @@ const Elections = () => {
                 </Zoom>
             }
 
+            {/* Pagination */}
+            <Pagination
+                count={Math.ceil(elections.length / electionsPerPage)}
+                page={currentPage}
+                onChange={handlePageChange}
+                // variant="outlined"
+                shape="rounded"
+                showFirstButton
+                showLastButton
+                color='standard'
+                sx={{ mb: 2.5 }}
+            />
 
         </Paper >
     );

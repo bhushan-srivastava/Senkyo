@@ -1,28 +1,36 @@
 import React from 'react';
-import { Pie } from 'react-chartjs-2';
-import { Card, CardContent, Typography, CardMedia } from '@mui/material';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale } from "chart.js";
-ChartJS.register(CategoryScale, ArcElement, LinearScale,);
+import { PieChart } from '@mui/x-charts/PieChart';
+import { Card, CardContent } from '@mui/joy';
+import { Typography } from '@mui/material';
+import Avatar from '@mui/joy/Avatar';
+import { isEmpty } from "./electionHelper";
 
 const WinnerCard = ({ winner }) => {
     return (
         <div className="winner-card">
-            <Card>
-                <CardMedia
-                    component="img"
-                    height="140"
-                    image={`https://example.com/${winner.imgCode}.jpg`}
+            <Card
+                variant="soft"
+                orientation="horizontal"
+            // sx={{ width: 320, }}
+            >
+                <Avatar
+                    // component="img"
+                    // height="140"
+                    src={winner.imgCode}
                     alt={winner.name}
+                    // size='lg'
+                    sx={{ height: '80px', width: '80px' }}
                 />
-                <CardContent>
-                    <Typography gutterBottom variant="h5" component="h2">
+
+                <CardContent sx={{ rowGap: 0 }}>
+                    <Typography variant="h6" fontWeight='normal'>
                         {winner.name}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p">
-                        Email: {winner.email}
+                    <Typography variant="body1" color="textSecondary">
+                        {winner.email}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary" component="p">
-                        Votes Received: {winner.noOfVotesReceived}
+                    <Typography variant="body1" color="textSecondary">
+                        Has received: {winner.noOfVotesReceived} votes
                     </Typography>
                 </CardContent>
             </Card>
@@ -31,36 +39,47 @@ const WinnerCard = ({ winner }) => {
 };
 
 
-const Results = ({ /*candidates*/ }) => {
-    // Dummy data for candidates
-    const candidates = [
-        { name: "Candidate 1", email: "candidate1@example.com", imgCode: "img1", noOfVotesReceived: 100 },
-        { name: "Candidate 2", email: "candidate2@example.com", imgCode: "img2", noOfVotesReceived: 150 },
-        { name: "Candidate 3", email: "candidate3@example.com", imgCode: "img3", noOfVotesReceived: 200 },
-    ];
+const Results = ({ election }) => {
 
-    const pieChartData = {
-        labels: candidates.map(candidate => candidate.name),
-        datasets: [{
-            data: candidates.map(candidate => candidate.noOfVotesReceived),
-            // backgroundColor: [
-            //     'rgba(255, 99, 132, 0.6)',
-            //     'rgba(54, 162, 235, 0.6)',
-            //     'rgba(255, 206, 86, 0.6)',
-            //     // Add more colors if you have more candidates
-            // ],
-        }],
-    };
+
+
+    if (isEmpty(election)) {
+        return "Election not found"
+    }
+    const pieChartData = election.candidates.map((candidate) => {
+        return {
+            value: candidate.noOfVotesReceived,
+            label: candidate.name,
+        }
+    });
 
 
     return (
         <>
-            <Pie data={pieChartData} />
+            <PieChart
+                series={[
+                    {
+                        data: pieChartData,
+                        valueFormatter: (v, { dataIndex }) => {
+                            // const { rank } = 
+                            return `recieved ${v.value} votes and is ranked #${dataIndex + 1}.`;
+                        },
+                    },
+                ]}
 
-            winners
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-                {candidates.map(candidate => (
-                    <WinnerCard key={candidate.name} winner={candidate} />
+                width={300}
+                height={200}
+            />
+
+            <Typography variant="h5" mt={2}>Winners</Typography>
+            <div style={{
+                display: 'flex', flexWrap: 'wrap',
+                // justifyContent: 'center' 
+                marginTop: '10px',
+                // marginBottom: '10px'
+            }}>
+                {election.candidates.slice(0, election.noOfWinners).map((candidate, index) => (
+                    <WinnerCard key={"winner-card-" + index} winner={candidate} />
                 ))}
             </div>
         </>

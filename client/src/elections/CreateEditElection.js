@@ -49,7 +49,10 @@ const CreateEditElection = () => {
     const { electionID } = useParams();
 
     useEffect(() => {
-        if (isAdmin && electionID) {
+        if (!isAdmin) {
+            navigate('/elections');
+        }
+        else if (isAdmin && electionID) {
             // Fetch election data based on the electionID
             fetch(`/api/elections/${electionID}`)
                 .then(response => {
@@ -77,9 +80,7 @@ const CreateEditElection = () => {
                     message.error(error.message);
                 });
         }
-        else {
-            navigate('/elections')
-        }
+
     }, []);
 
     const handleChange = (e) => {
@@ -165,9 +166,9 @@ const CreateEditElection = () => {
     return (
 
         isAdmin ?
-            <Paper variant="outlined">
+            <Paper variant="outlined" sx={{ border: 'none' }}>
                 <br />
-                <Typography level="h3" sx={{ textAlign: 'center', mb: 2 }}>
+                <Typography level="h4" sx={{ textAlign: 'center', mb: 2 }}>
                     {electionID ? "Edit " : "Create "}Election
                 </Typography>
 
