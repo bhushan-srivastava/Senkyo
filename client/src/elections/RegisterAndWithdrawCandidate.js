@@ -40,14 +40,14 @@ const RegisterAndWithdrawCandidate = ({ electionID, isAdmin }) => {
     return (
         <Stack direction='row' gap={2} flexWrap='wrap' justifyContent='center'>
             <IconButton variant="contained" color="secondary" onClick={() => { handleClick('Register') }} sx={{ borderRadius: '6px', fontSize: 'small' }} size="small">
-                <PersonAddAltOutlinedIcon />
                 BECOME A CANDIDATE
+                <PersonAddAltOutlinedIcon />
             </IconButton>
             <IconButton onClick={() => { handleClick('Withdraw') }} color="secondary" sx={{ borderRadius: '6px', fontSize: 'small' }} size="small"
             >
 
-                <PersonRemoveOutlinedIcon />
                 WITHDRAW AS A CANDIDATE
+                <PersonRemoveOutlinedIcon />
 
             </IconButton>
         </Stack>

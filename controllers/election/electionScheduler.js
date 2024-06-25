@@ -7,7 +7,7 @@ today.setHours(0, 0, 0, 0);
 const yesterday = new Date(today.getTime() - (24 * 60 * 60 * 1000));
 
 const tomorrow = new Date(today.getTime() + (24 * 60 * 60 * 1000));
-console.log(yesterday, today, tomorrow);
+
 // Define a function to handle registration start
 async function startRegistration() {
     try {

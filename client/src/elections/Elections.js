@@ -271,10 +271,10 @@ const Elections = () => {
                                     <IconButton
                                         href={`/elections/${election._id}`}
                                         variant='solid'
-                                        sx={{ borderRadius: "6px", color: 'InfoText', mr: 2 }}
+                                        sx={{ borderRadius: "6px", color: 'InfoText', mr: 2, fontSize: 'small' }}
 
                                     >
-
+                                        Open
                                         <ReadMoreIcon color='fff' />
 
                                     </IconButton>
@@ -282,9 +282,10 @@ const Elections = () => {
                                     {isAdmin && <IconButton
                                         href={`/elections/${election._id}/edit`}
                                         variant='solid'
-                                        sx={{ borderRadius: "6px", color: 'InfoText' }}
+                                        sx={{ borderRadius: "6px", color: 'InfoText', fontSize: 'small' }}
 
                                     >
+                                        Edit
                                         <ModeEditOutlinedIcon color='fff' />
 
                                     </IconButton>}
