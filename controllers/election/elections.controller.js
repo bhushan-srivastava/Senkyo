@@ -24,6 +24,7 @@ async function getAllElections(req, res) {
         // Query elections from the database with pagination
         const elections = await Elections.find(dbQuery)
             .select('-description -votersWhoHaveVoted -courses -divisions') // Exclude the description field
+            .sort({ registrationStart: -1 })  // Sort by registrationStart field in descending order
             .skip(startIndex) // Skip elections before the current page
             .limit(limit) // Limit the number of elections per page
             .populate({
