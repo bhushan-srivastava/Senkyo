@@ -1,57 +1,92 @@
-import { Button, IconButton, Stack } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { message } from "antd";
+import Cookies from "js-cookie";
+import { Box, Stack, Typography } from "@mui/material";
+import { IconButton } from "@mui/material";
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 import PersonRemoveOutlinedIcon from '@mui/icons-material/PersonRemoveOutlined';
 
-const RegisterAndWithdrawCandidate = ({ electionID, isAdmin }) => {
+const RegisterAndWithdrawCandidate = ({ election }) => {
+  const [candidates, setCandidates] = useState([]);
+  const [isCandidate, setIsCandidate] = useState(false);
 
-    const handleClick = async (action) => {
-        try {
-            console.log(action.toLowerCase());
-            if (isAdmin) {
-                message.error("Admin cannot " + action + " as a Candidate");
-                return
-            }
+  const user = Cookies.get("name");
+  // const user = document.cookie.
 
-            const response = await fetch(`/api/elections/${electionID}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 'action': action.toLowerCase() })
-            });
+  useEffect(() => {
+    if (election && election.candidates) {
+      setCandidates(election.candidates);
 
-            const responseData = await response.json();
-
-            if (response.status == 200) {
-                message.success(responseData.message);
-            }
-            else {
-                message.error(action + ' unsuccessful ' + responseData.message, 10);
-            }
-
-        } catch (error) {
-            // message.error(action + ' unsuccessful ' + responseData.message, 10);
-            console.log(error.message);
+      for (let index = 0; index < election.candidates.length; index++) {
+        //console.log("in the loop with:", election.candidates[index].name);
+        if (election.candidates[index].name === user) {
+          setIsCandidate(true);
         }
+      }
+
+      //creating a backend api to check for registration instead of using cookie name
     }
+  }, [election, candidates]);
 
+  const handleRegistration = () => {
+    fetch(`/api/elections/${election._id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        action: isCandidate ? "withdraw" : "register",
+      })
+    })
+      .then(async response => {
+        // Ensure the response is successful
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Something went wrong');
+        }
+        return response.json();
+      })
+      .then((data) => {
 
-    return (
-        <Stack direction='row' gap={2} flexWrap='wrap' justifyContent='center'>
-            <IconButton variant="contained" color="secondary" onClick={() => { handleClick('Register') }} sx={{ borderRadius: '6px', fontSize: 'small' }} size="small">
-                BECOME A CANDIDATE
-                <PersonAddAltOutlinedIcon />
-            </IconButton>
-            <IconButton onClick={() => { handleClick('Withdraw') }} color="secondary" sx={{ borderRadius: '6px', fontSize: 'small' }} size="small"
-            >
+        message.success(data.message);
+        setIsCandidate(!isCandidate);
+      })
+      .catch((error) => {
+        message.error(error.message);
+      });
+  }
 
-                WITHDRAW AS A CANDIDATE
-                <PersonRemoveOutlinedIcon />
+  return (
+    <Box display="flex" justifyContent="center" alignItems="center" sx={{
+      // border: "2px solid grey",
+      padding: 2,
+    }}>
 
-            </IconButton>
+      {election.status == "Pending" && (
+        <Typography>Registration Hasn't started yet</Typography>
+      )}
+      {isCandidate ?
+        <Stack direction='row' gap={1} alignItems='center'>
+          Want to withdraw as a candidate from this election?
+
+          <IconButton onClick={handleRegistration} color="secondary" sx={{ borderRadius: '6px', fontSize: 'small' }} size="small"
+          >
+
+            WITHDRAW <PersonRemoveOutlinedIcon />
+
+          </IconButton>
         </Stack>
-    );
-}
+        :
+        <Stack direction='row' gap={1} alignItems='center'>
+          Want to become a candidate in this election?
+          <IconButton color="secondary" onClick={handleRegistration} sx={{ borderRadius: '6px', fontSize: 'small', }} size="small">
+            REGISTER <PersonAddAltOutlinedIcon />
+          </IconButton>
+        </Stack>
+      }
+
+    </Box>
+  );
+};
 
 export default RegisterAndWithdrawCandidate;

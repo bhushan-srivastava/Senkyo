@@ -23,7 +23,7 @@ async function getAllElections(req, res) {
 
         // Query elections from the database with pagination
         const elections = await Elections.find(dbQuery)
-            .select('-description -votersWhoHaveVoted -courses -divisions') // Exclude the description field
+            .select('-description -votersWhoHaveVoted') // Exclude the description field
             .sort({ registrationStart: -1 })  // Sort by registrationStart field in descending order
             .skip(startIndex) // Skip elections before the current page
             .limit(limit) // Limit the number of elections per page
@@ -53,10 +53,10 @@ async function getElectionByID(req, res) {
 
         const { id } = req.params;
 
+        console.log("Req to getElectionByID 1:\t", req.params);
         // Find the election by ID and populate the candidates' data
         const election = await Elections.findById(id)
             .select('-__v -createdAt -updatedAt');
-
 
         if (!election) {
             return res.status(404).json({ message: "Election not found" });
@@ -72,9 +72,12 @@ async function getElectionByID(req, res) {
         const formattedCandidates = await Promise.all(election.candidates.map(async (candidate) => {
             const user = await Users.findById(candidate.candidateID);
             const candidateData = {
-                _id: candidate._id,
+                _id: user._id,
                 name: user.name,
                 email: user.email,
+                course: user.course,
+                division: user.division,
+                gender: user.gender,
                 imgCode: user.imgCode,
             };
             if (election.status == 'Finished') {
@@ -83,6 +86,7 @@ async function getElectionByID(req, res) {
             return candidateData;
         }));
 
+        // remove if error
         formattedCandidates.sort((candidate1, candidate2) => candidate1.noOfVotesReceived - candidate2.noOfVotesReceived)
 
         const formattedVoters = election.votersWhoHaveVoted.map(voter => voter.voterID);
@@ -249,6 +253,8 @@ async function adminUpdateElection(req, res) {
 
 async function voterUpdateElection(req, res) {
 
+    console.log("****************\n\nReg to voterUpdateElection with action: ", req.body.action);
+
     try {
         if (req.body.isAdmin) {
             return res.status(401).json({ message: "Unauthorized" });
@@ -259,7 +265,7 @@ async function voterUpdateElection(req, res) {
 
         // Fetch the election by ID
         const election = await Elections.findById(id + "");
-
+        console.log("\nElection: ", election);
         if (!election) {
             return res.status(404).json({ message: "Election not found" });
         }
@@ -278,6 +284,7 @@ async function voterUpdateElection(req, res) {
         // Perform the action based on the request body
         switch (action) {
             case 'register':
+                console.log("register code ran");
                 if (election.status !== 'Registration') {
                     return res.status(400).json({ message: 'Registration is not ongoing' })
                 }
@@ -308,6 +315,7 @@ async function voterUpdateElection(req, res) {
                 break;
 
             case 'vote':
+
                 if (election.status !== 'Ongoing') {
                     return res.status(400).json({ message: "Voting is not ongoing for this election" });
                 }
@@ -317,13 +325,13 @@ async function voterUpdateElection(req, res) {
                     return res.status(400).json({ message: "You have already voted in this election" });
                 }
 
-                if (req.body.candidates.length > election.numberOfWinners) {
+                if (req.body.candidates.checkedValues.length > election.numberOfWinners) {
                     return res.status(400).json({ message: "You cannot vote for more than " + election.numberOfWinners + " candidates" })
                 }
 
-                for (cd of req.body.candidates) {
-
+                for (const cd of req.body.candidates.checkedValues) {
                     const candidateIndex = election.candidates.findIndex(candidate => candidate.candidateID.equals(cd));
+                    console.log("result of query:", candidateIndex);
                     if (candidateIndex === -1) {
                         return res.status(400).json({ message: "Candidate not found" });
                     }

@@ -43,6 +43,7 @@ import { useOutletContext } from "react-router-dom"
 import { Pagination, Paper, Stack } from '@mui/material';
 import Filter from './Filter';
 import { message } from "antd";
+import ElectionInfoList from './ElectionInfoList';
 
 const Elections = () => {
     const { isAdmin } = useOutletContext();
@@ -180,89 +181,7 @@ const Elections = () => {
 
                                 </Box>
 
-                                <List sx={{ flexWrap: 'wrap', alignContent: 'center' }}>
-                                    <ListItem>
-                                        <ListItemDecorator>
-                                            {statusIcons[election.status]()}
-                                        </ListItemDecorator>
-                                        <ListItemContent>
-                                            <Typography level="title-sm">Status</Typography>
-                                            <Typography level="body-sm">
-                                                {election.status}
-                                            </Typography>
-                                        </ListItemContent>
-                                    </ListItem>
-
-                                    <ListItem>
-                                        <ListItemDecorator>
-                                            <CalendarMonthIcon />
-                                        </ListItemDecorator>
-                                        <ListItemContent>
-                                            <Typography level="title-sm">Registration Dates</Typography>
-                                            <Typography level="body-sm">
-                                                {new Date(election.registrationStart).toLocaleDateString('en-GB', {
-                                                    day: '2-digit',
-                                                    month: '2-digit',
-                                                    year: '2-digit'
-                                                }) + ' - ' + new Date(election.registrationEnd).toLocaleDateString('en-GB', {
-                                                    day: '2-digit',
-                                                    month: '2-digit',
-                                                    year: '2-digit'
-                                                })}
-                                            </Typography>
-                                        </ListItemContent>
-                                    </ListItem>
-
-                                    <ListItem>
-                                        <ListItemDecorator>
-                                            <CalendarMonthIcon />
-                                        </ListItemDecorator>
-                                        <ListItemContent>
-                                            <Typography level="title-sm">Voting Dates</Typography>
-                                            <Typography level="body-sm">
-                                                {new Date(election.votingStart).toLocaleDateString('en-GB', {
-                                                    day: '2-digit',
-                                                    month: '2-digit',
-                                                    year: '2-digit'
-                                                }) + ' - ' + new Date(election.votingEnd).toLocaleDateString('en-GB', {
-                                                    day: '2-digit',
-                                                    month: '2-digit',
-                                                    year: '2-digit'
-                                                })}
-                                            </Typography>
-                                        </ListItemContent>
-                                    </ListItem>
-
-                                    <ListItem>
-                                        <ListItemDecorator>
-                                            <Groups3OutlinedIcon />
-                                        </ListItemDecorator>
-                                        <ListItemContent>
-                                            <Typography level="title-sm">Candidate's Genders</Typography>
-                                            <Typography level="body-sm">
-                                                {election.genders.map((gender, index) => {
-                                                    if (index < election.genders.length - 1) return (gender += ', ');
-                                                    return gender;
-                                                })
-                                                }
-                                            </Typography>
-                                        </ListItemContent>
-                                    </ListItem>
-
-                                    <ListItem>
-                                        <ListItemDecorator>
-                                            <EmojiEventsOutlinedIcon />
-                                        </ListItemDecorator>
-                                        <ListItemContent>
-                                            <Typography level="title-sm">Number of Winners</Typography>
-                                            <Typography level="body-sm">
-                                                {election.numberOfWinners}
-                                            </Typography>
-                                        </ListItemContent>
-                                    </ListItem>
-
-                                </List>
-
+                                <ElectionInfoList election={election} flexDirection='column' />
 
                             </CardContent>
 
