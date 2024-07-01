@@ -90,10 +90,10 @@ const Voting = ({ election }) => {
 
         {candidates &&
           candidates.map((candidate) => {
-            const isChecked = checkedValues.includes(candidate._id);
+            const isChecked = checkedValues.includes(candidate.candidateID);
             return (
               <ListItem
-                key={candidate._id}
+                key={candidate.candidateID}
                 variant={isChecked ? "soft" : "outlined"}
                 sx={{
                   borderRadius: "md",
@@ -126,16 +126,16 @@ const Voting = ({ election }) => {
                 }}
               >
                 <Checkbox
-                  id={candidate._id}
-                  value={candidate._id}
+                  id={candidate.candidateID}
+                  value={candidate.candidateID}
                   checked={isChecked}
                   checkedIcon={<CheckBoxIcon color="info" />}
                   overlay
                   slotProps={{ action: { className: checkboxClasses.checked } }}
-                  onChange={handleCheckboxChange(candidate._id)}
+                  onChange={handleCheckboxChange(candidate.candidateID)}
                 />
                 <Avatar src={candidate.imgCode} variant="soft" size="lg" />
-                <FormLabel htmlFor={candidate._id}>{candidate.name}</FormLabel>
+                <FormLabel htmlFor={candidate.candidateID}>{candidate.name}</FormLabel>
               </ListItem>
             );
           })}
