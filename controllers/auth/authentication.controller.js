@@ -12,6 +12,10 @@ import deleteFolder from "./file handlers/deleteJpg.js";
 import path from 'path'
 import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
+
 async function adminLogin(req, res) {
   try {
     const admin = await Admins.findOne({ "email": req.body.email });
@@ -64,10 +68,6 @@ async function recognizeFaces(imagePath1, imagePath2) {
     // await faceapi.nets.faceRecognitionNet.loadFromDisk("./face-api-models");
     // await faceapi.nets.faceLandmark68Net.loadFromDisk("./face-api-models");
     // await faceapi.nets.ssdMobilenetv1.loadFromDisk("./face-api-models");
-
-    const __filename = fileURLToPath(import.meta.url);
-
-    const __dirname = path.dirname(__filename);
 
     const faceAPIModelsPath = path.join(__dirname, './face-api-models')
 
