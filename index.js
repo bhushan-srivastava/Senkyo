@@ -25,7 +25,6 @@ server.use(cookieParser());
 
 
 /* production client build folder */
-/* production client build folder */
 if (process.env.NODE_ENV === 'production') {
     const __filename = fileURLToPath(import.meta.url);
 
