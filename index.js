@@ -23,6 +23,10 @@ const server = express();
 server.use(express.json());
 server.use(cookieParser());
 
+//handling routes
+server.use('/api/auth', authRouter);
+server.use('/api/voters', voterRouter);
+server.use('/api/elections', electionRouter);
 
 /* production client build folder */
 if (process.env.NODE_ENV === 'production') {
@@ -37,10 +41,6 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-//handling routes
-server.use('/api/auth', authRouter);
-server.use('/api/voters', voterRouter);
-server.use('/api/elections', electionRouter);
 
 const port = process.env.PORT || 8080
 
