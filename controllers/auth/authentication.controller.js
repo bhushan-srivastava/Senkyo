@@ -63,48 +63,48 @@ function createToken(email) {
 };
 
 async function recognizeFaces(imagePath1, imagePath2) {
-  try {
-    // Load face detection and recognition models
-    // await faceapi.nets.faceRecognitionNet.loadFromDisk("./face-api-models");
-    // await faceapi.nets.faceLandmark68Net.loadFromDisk("./face-api-models");
-    // await faceapi.nets.ssdMobilenetv1.loadFromDisk("./face-api-models");
 
-    const faceAPIModelsPath = path.join(__dirname, './face-api-models')
+  // Load face detection and recognition models
+  // await faceapi.nets.faceRecognitionNet.loadFromDisk("./face-api-models");
+  // await faceapi.nets.faceLandmark68Net.loadFromDisk("./face-api-models");
+  // await faceapi.nets.ssdMobilenetv1.loadFromDisk("./face-api-models");
 
-
-    // Load face detection and recognition models
-    await faceapi.nets.faceRecognitionNet.loadFromDisk(faceAPIModelsPath);
-    await faceapi.nets.faceLandmark68Net.loadFromDisk(faceAPIModelsPath);
-    await faceapi.nets.ssdMobilenetv1.loadFromDisk(faceAPIModelsPath);
+  const faceAPIModelsPath = path.join(__dirname, './face-api-models')
 
 
-    // Load images
-    const img1 = await loadImage(imagePath1);
-    const img2 = await loadImage(imagePath2);
+  // Load face detection and recognition models
+  await faceapi.nets.faceRecognitionNet.loadFromDisk(faceAPIModelsPath);
+  await faceapi.nets.faceLandmark68Net.loadFromDisk(faceAPIModelsPath);
+  await faceapi.nets.ssdMobilenetv1.loadFromDisk(faceAPIModelsPath);
 
-    console.log(img1);
-    console.log(img2);
 
-    // Detect faces in images
-    const detections1 = await faceapi.detectAllFaces(img1).withFaceLandmarks().withFaceDescriptors();
-    const detections2 = await faceapi.detectAllFaces(img2).withFaceLandmarks().withFaceDescriptors();
+  // Load images
+  const img1 = await loadImage(imagePath1);
+  const img2 = await loadImage(imagePath2);
 
-    console.log("D1:", detections1);
-    console.log("~~~~~~~~~~~~d2:", detections2);
+  console.log(img1);
+  console.log(img2);
 
-    // Recognize faces
-    const faceMatcher = new faceapi.FaceMatcher(detections1);
-    const results = detections2.map(descriptor =>
-      faceMatcher.findBestMatch(descriptor.descriptor)
-    );
+  // Detect faces in images
+  const detections1 = await faceapi.detectAllFaces(img1).withFaceLandmarks().withFaceDescriptors();
+  const detections2 = await faceapi.detectAllFaces(img2).withFaceLandmarks().withFaceDescriptors();
 
-    const folderPath = './photos';
-    deleteFolder(folderPath);
-    return results;
+  console.log("D1:", detections1);
+  console.log("~~~~~~~~~~~~d2:", detections2);
 
-  } catch (error) {
-    console.log("Error in facial recognition:", error);
+  if (detections2.length == 0) {
+    throw new Error('Please take a clear picture');
   }
+
+  // Recognize faces
+  const faceMatcher = new faceapi.FaceMatcher(detections1);
+  const results = detections2.map(descriptor =>
+    faceMatcher.findBestMatch(descriptor.descriptor)
+  );
+
+  const folderPath = './photos';
+  deleteFolder(folderPath);
+  return results;
 
 }
 
@@ -170,8 +170,8 @@ let userLogin = async (req, res) => {
     }
 
   } catch (error) {
-    console.log("Error occured while creating jwt token:", error);
-    res.end("bad request");
+    console.log("error while voter login", error);
+    res.status(400).json({ message: error.message });
   }
 
 }
