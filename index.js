@@ -37,7 +37,6 @@ if (process.env.NODE_ENV == 'production') {
     server.use(express.static(path.join(__dirname1, './client/build')))
 
     server.get('/*', function (req, res) {
-        console.log('here');
         res.sendFile(path.join(__dirname1, './client/build/index.html'));
     });
 }
