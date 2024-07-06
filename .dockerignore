@@ -158,3 +158,9 @@ TODO
 
 insertAdmin.js
 test.users.json
+
+client/public
+client/node_modules
+client/src
+client/package*.json
+client/README.md
