@@ -29,21 +29,20 @@ server.use('/api/voters', voterRouter);
 server.use('/api/elections', electionRouter);
 
 /* production client build folder */
-if (process.env.NODE_ENV === 'production') {
-    const __filename = fileURLToPath(import.meta.url);
+if (process.env.NODE_ENV == 'production') {
+    const __filename1 = fileURLToPath(import.meta.url);
 
-    const __dirname = path.dirname(__filename);
+    const __dirname1 = path.dirname(__filename1);
 
-    server.use(express.static(path.join(__dirname, './client/build')))
+    server.use(express.static(path.join(__dirname1, './client/build')))
 
     server.get('/*', function (req, res) {
-        res.sendFile(path.join(__dirname, './client/build/index.html'));
+        console.log('here');
+        res.sendFile(path.join(__dirname1, './client/build/index.html'));
     });
 }
 
-
 const port = process.env.PORT || 8080
-
 
 mongoose.set('strictQuery', true);
 // mongoose.connect(process.env.CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })

@@ -12,9 +12,9 @@ import deleteFolder from "./file handlers/deleteJpg.js";
 import path from 'path'
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
+const __filename2 = fileURLToPath(import.meta.url);
 
-const __dirname = path.dirname(__filename);
+const __dirname2 = path.dirname(__filename2);
 
 async function adminLogin(req, res) {
   try {
@@ -69,7 +69,7 @@ async function recognizeFaces(imagePath1, imagePath2) {
   // await faceapi.nets.faceLandmark68Net.loadFromDisk("./face-api-models");
   // await faceapi.nets.ssdMobilenetv1.loadFromDisk("./face-api-models");
 
-  const faceAPIModelsPath = path.join(__dirname, './face-api-models')
+  const faceAPIModelsPath = path.join(__dirname2, './face-api-models');
 
 
   // Load face detection and recognition models
@@ -93,6 +93,9 @@ async function recognizeFaces(imagePath1, imagePath2) {
   console.log("~~~~~~~~~~~~d2:", detections2);
 
   if (detections2.length == 0) {
+    const folderPath = './photos';
+    deleteFolder(folderPath);
+
     throw new Error('Please take a clear picture');
   }
 
