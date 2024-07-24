@@ -120,7 +120,7 @@ const Register = () => {
             navigate("/auth/login");
           }, 1000); // 2 seconds delay
         } else {
-          message.error("Something went wrong");
+          message.error("Something went wrong ", response.data.message ?? "");
           setIsLoading(false);
         }
       })

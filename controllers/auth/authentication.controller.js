@@ -115,6 +115,10 @@ let userLogin = async (req, res) => {
   const { email, password, imgCode } = req.body;
 
   try {
+    if (!email.endsWith('@ves.ac.in')) {
+      throw new Error('Please use your VES email ID');
+    }
+
     const user = await Users.findOne({ "email": email });
 
     if (!user) {
@@ -180,7 +184,9 @@ let userLogin = async (req, res) => {
 }
 
 let userRegister = async (req, res) => {
-
+  if (!email.endsWith('@ves.ac.in')) {
+    res.status(404).json({ message: 'Please use your VES email ID' });
+  }
 
   bcrypt.genSalt(parseInt(process.env.BCRYPT_SALT_ROUNDS), (err, salt) => {
     if (err) {
