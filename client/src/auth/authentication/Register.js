@@ -118,13 +118,15 @@ const Register = () => {
             setIsLoading(false);
             // Navigate to login page
             navigate("/auth/login");
-          }, 1000); // 2 seconds delay
+          }, 1000); // 1 second delay so that user can see the 'QR Code Downloaded' message
         } else {
-          message.error("Something went wrong ", response.data.message ?? "");
           setIsLoading(false);
+          message.error("Something went wrong: " + (response.data.message || ""));
         }
       })
       .catch(function (error) {
+        setIsLoading(false);
+        message.error(error.response?.data?.message || error.message);
         console.log(error);
       });
   };
