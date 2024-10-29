@@ -29,7 +29,10 @@ const ElectionInfoList = ({ election, flexDirection }) => {
 
         <List sx={{
             flexDirection: flexDirection,
-            flexWrap: 'wrap', justifyContent: 'center'
+            flexWrap: 'wrap',
+            // justifyContent: 'space-evenly',
+            p: flexDirection == 'row' ? 4 : 0,
+            gap: flexDirection == 'row' ? 2 : 0
         }}>
             <ListItem>
                 <ListItemDecorator>

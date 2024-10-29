@@ -1,32 +1,63 @@
 import Elections from "../../models/election/election.model.js"
 import Users from "../../models/user/user.model.js"
+import {
+    blockchainAddElection,
+    blockchainGetAllElections,
+    blockchainAddCandidate,
+    blockchainVote,
+    // blockchainGetCandidate, 
+    blockchainGetElectionTitle,
+    // blockchainGetAllCandidates, 
+    blockchainRemoveCandidate,
+    blockchainToggleElectionStatus,
+    blockchainChangeElectionTitle,
+    blockchainGetAllCandidates
+} from "../blockchain/blockchainScripts.js";
 
 async function getAllElections(req, res) {
     try {
-        // let elections;
-
         let dbQuery = {};
 
         // Check if the request is from a voter
         if (!req.body.isAdmin) {
-            // If it's a voter, filter elections based on course and division
-            dbQuery.courses = { $in: [req.body.user.course] }
-            dbQuery.divisions = { $in: [req.body.user.division] }
+            dbQuery.courses = { $in: [req.body.user.course] };
+            dbQuery.divisions = { $in: [req.body.user.division] };
         }
 
-        // Determine pagination parameters
-        const page = parseInt(req.query.page) || 1; // Current page number, default to 1 if not provided
-        const limit = parseInt(req.query.limit) || 4; // Number of elections per page, default to 4 if not provided
+        // Additional filtering based on query parameters
+        if (req.query.status) {
+            dbQuery.status = req.query.status; // Filter by status
+        }
+        if (req.query.courses) {
+            dbQuery.courses = { $in: req.query.courses.split(',') }; // Filter by courses
+        }
+        if (req.query.divisions) {
+            dbQuery.divisions = { $in: req.query.divisions.split(',') }; // Filter by divisions
+        }
+        if (req.query.genders) {
+            dbQuery.genders = { $in: req.query.genders.split(',') }; // Filter by genders
+        }
 
-        // Calculate the index of the first election for the current page
-        const startIndex = (page - 1) * limit;
+        // Filter by registration dates
+        if (req.query.registrationStart) {
+            dbQuery.registrationStart = { $gte: new Date(req.query.registrationStart) }; // Start date
+        }
+        if (req.query.registrationEnd) {
+            dbQuery.registrationEnd = { $lte: new Date(req.query.registrationEnd) }; // End date
+        }
 
-        // Query elections from the database with pagination
+        // Filter by voting dates
+        if (req.query.votingStart) {
+            dbQuery.votingStart = { $gte: new Date(req.query.votingStart) }; // Start date
+        }
+        if (req.query.votingEnd) {
+            dbQuery.votingEnd = { $lte: new Date(req.query.votingEnd) }; // End date
+        }
+
+        // Query elections from the database without pagination
         const elections = await Elections.find(dbQuery)
             .select('-description -votersWhoHaveVoted') // Exclude the description field
-            .sort({ registrationStart: -1 })  // Sort by registrationStart field in descending order
-            .skip(startIndex) // Skip elections before the current page
-            .limit(limit) // Limit the number of elections per page
+            .sort({ registrationStart: -1 }) // Sort by registrationStart field in descending order
             .populate({
                 path: 'candidates.candidateID',
                 model: 'users',
@@ -36,17 +67,20 @@ async function getAllElections(req, res) {
 
         // Process the candidates' images
         elections.forEach(election => {
-            election.candidatesImages = election.candidates.slice(0, 2).map(candidate => candidate.candidateID.imgCode);
+            election.candidatesImages = election.candidates.slice(0, 2).map(candidate => candidate.candidateID?.imgCode);
             delete election.candidates; // Remove the candidates field
         });
+
+        // Checking blockchain connection
+        // await blockchainGetAllElections();
 
         res.status(200).json(elections);
     } catch (error) {
         console.error('Error fetching elections:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: error.message });
     }
-
 }
+
 
 async function getElectionByID(req, res) {
     try {
@@ -70,9 +104,10 @@ async function getElectionByID(req, res) {
         }
 
         const formattedCandidates = await Promise.all(election.candidates.map(async (candidate) => {
-            const user = await Users.findById(candidate.candidateID);
+            const user = await Users.findById(candidate.candidateID.toString());
             const candidateData = {
-                _id: user._id,
+                // _id: user._id,
+                _id: candidate.candidateID,
                 name: user.name,
                 email: user.email,
                 course: user.course,
@@ -80,14 +115,30 @@ async function getElectionByID(req, res) {
                 gender: user.gender,
                 imgCode: user.imgCode,
             };
+
             if (election.status == 'Finished') {
-                candidateData.noOfVotesReceived = candidate.noOfVotesReceived;
+                try {
+                    const blockchainNoOfVotesReceived = await blockchainGetAllCandidates(id);
+
+                    console.log('got all candidates from blockchain for election', election.title, blockchainNoOfVotesReceived);
+
+                    candidateData.noOfVotesReceived =
+                        Object.hasOwn(blockchainNoOfVotesReceived, candidate.candidateID) ?
+                            blockchainNoOfVotesReceived[candidate.candidateID]
+                            :
+                            candidate.noOfVotesReceived;
+
+                } catch (blockchainError) {
+                    console.error('Error getting all candidates from blockchain:', blockchainError);
+                    candidateData.noOfVotesReceived = candidate.noOfVotesReceived;
+                }
             }
+
             return candidateData;
         }));
 
         // remove if error
-        formattedCandidates.sort((candidate1, candidate2) => candidate1.noOfVotesReceived - candidate2.noOfVotesReceived)
+        formattedCandidates.sort((candidate1, candidate2) => candidate2.noOfVotesReceived - candidate1.noOfVotesReceived)
 
         const formattedVoters = election.votersWhoHaveVoted.map(voter => voter.voterID);
 
@@ -120,15 +171,14 @@ async function createElection(req, res) {
         votingStart = new Date(votingStart);
         votingEnd = new Date(votingEnd);
 
+        registrationStart.setHours(0, 0, 0, 0);
+        registrationEnd.setHours(0, 0, 0, 0);
+        votingStart.setHours(0, 0, 0, 0);
+        votingEnd.setHours(0, 0, 0, 0);
 
         // console.log(registrationStart, registrationEnd, votingStart, votingEnd);
+
         const today = new Date();
-
-        // registrationStart.setHours(0, 0, 0, 0);
-        // registrationEnd.setHours(0, 0, 0, 0);
-        // votingStart.setHours(0, 0, 0, 0);
-        // votingEnd.setHours(0, 0, 0, 0);
-
         today.setHours(0, 0, 0, 0);
 
         if (registrationStart < today) {
@@ -168,12 +218,26 @@ async function createElection(req, res) {
         // Save the new election to the database
         const savedElection = await newElection.save();
 
+        // Call blockchainAddElection after saving to MongoDB
+        const blockchainElectionID = savedElection._id.toString(); // Use MongoDB election ID
+        const blockchainTitle = savedElection.title;
+
+        try {
+            const blockchainReceipt = await blockchainAddElection(blockchainElectionID, blockchainTitle);
+            console.log('Election added to blockchain:', blockchainReceipt);
+        } catch (blockchainError) {
+            console.error('Error adding election to blockchain:', blockchainError);
+            return res.status(500).json({ message: 'Election created but failed to add to blockchain' });
+        }
+
+
+
         // Respond with the newly created election
         res.status(201).json(savedElection);
     } catch (error) {
         // Handle errors
         console.error('Error creating election:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: error.message });
     }
 }
 
@@ -244,16 +308,41 @@ async function adminUpdateElection(req, res) {
         // Save the updated election
         await election.save();
 
+        // Get the current election title from the blockchain
+        // const blockchainTitle = await blockchainGetElectionTitle(id);
+
+        // Check if the title has changed and update the blockchain
+        // if (updates.title && updates.title !== blockchainTitle) {
+        //     const changeTitleResult = await blockchainChangeElectionTitle(id, updates.title);
+        //     if (!changeTitleResult.success) {
+        //         console.error('Error updating title on blockchain:', changeTitleResult.message);
+        //         return res.status(500).json({ message: changeTitleResult.message });
+        //     }
+        // }
+
+        let toggleStatusResult;
+        try {
+            const blockchainElectionStatus = !(election.status == 'Pending' || election.status == 'Finished')
+
+            console.log("called to change status on blockchain to ", blockchainElectionStatus);
+
+            toggleStatusResult = await blockchainToggleElectionStatus(id, blockchainElectionStatus);
+        } catch (error) {
+
+            console.error('Error changing election status on blockchain:', toggleStatusResult.message);
+            return res.status(500).json({ message: toggleStatusResult.message });
+        }
         res.status(200).json({ message: "Election updated successfully", election });
     } catch (error) {
         console.error("Error updating election:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: error.message });
     }
 }
 
 async function voterUpdateElection(req, res) {
 
-    console.log("****************\n\nReg to voterUpdateElection with action: ", req.body.action);
+    //console.log("****************\n\nReg to voterUpdateElection with action: ", req.body.action);
+    //console.log("****************\n\nReq data candidates: ", req.body.candidates);
 
     try {
         if (req.body.isAdmin) {
@@ -265,7 +354,7 @@ async function voterUpdateElection(req, res) {
 
         // Fetch the election by ID
         const election = await Elections.findById(id + "");
-        console.log("\nElection: ", election);
+        //console.log("\nElection: ", election);
         if (!election) {
             return res.status(404).json({ message: "Election not found" });
         }
@@ -299,6 +388,14 @@ async function voterUpdateElection(req, res) {
                 }
                 election.candidates.push({ candidateID: req.body.user._id, noOfVotesReceived: 0 });
 
+                // Adding the candidate to the blockchain
+                try {
+                    const blockchainResult = await blockchainAddCandidate(election._id.toString(), req.body.user._id.toString());
+                    console.log('Candidate successfully added to the blockchain:', blockchainResult);
+                } catch (blockchainError) {
+                    console.error('Failed to add candidate to the blockchain:', blockchainError.message);
+                }
+
                 break;
 
             case 'withdraw':
@@ -311,6 +408,15 @@ async function voterUpdateElection(req, res) {
                     return res.status(400).json({ message: "You are not registered as a candidate for this election" });
                 }
                 election.candidates.splice(index, 1);
+
+                // Remove the candidate from the blockchain
+                try {
+                    const blockchainResult = await blockchainRemoveCandidate(election._id.toString(), req.body.user._id.toString());
+                    console.log('Candidate successfully removed from the blockchain:', blockchainResult);
+                } catch (blockchainError) {
+                    console.error('Failed to remove candidate from the blockchain:', blockchainError.message);
+                    return res.status(500).json({ message: blockchainError.message });
+                }
 
                 break;
 
@@ -338,9 +444,20 @@ async function voterUpdateElection(req, res) {
 
                     // Update the number of votes received by the candidate
                     election.candidates[candidateIndex].noOfVotesReceived++;
+
+                    // Cast the vote on the blockchain
+                    try {
+                        console.log("Recached voting place in blockchain")
+                        const blockchainResult = await blockchainVote(election._id.toString(), cd.toString(), req.body.user._id.toString());
+                        console.log('Vote successfully recorded on blockchain:', blockchainResult);
+                    } catch (blockchainError) {
+                        console.error('Failed to cast vote on the blockchain:', blockchainError.message);
+                    }
                 }
                 // Add the user to the list of voters who have voted in the election
                 election.votersWhoHaveVoted.push({ voterID: req.body.user._id });
+
+
 
                 break;
 
@@ -352,9 +469,10 @@ async function voterUpdateElection(req, res) {
         await election.save();
 
         res.status(200).json({ message: action + " performed successfully" });
+
     } catch (error) {
         console.error("Error updating election:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: error.message });
     }
 }
 

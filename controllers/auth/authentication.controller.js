@@ -82,15 +82,15 @@ async function recognizeFaces(imagePath1, imagePath2) {
   const img1 = await loadImage(imagePath1);
   const img2 = await loadImage(imagePath2);
 
-  console.log(img1);
-  console.log(img2);
+  //console.log(img1);
+  //console.log(img2);
 
   // Detect faces in images
   const detections1 = await faceapi.detectAllFaces(img1).withFaceLandmarks().withFaceDescriptors();
   const detections2 = await faceapi.detectAllFaces(img2).withFaceLandmarks().withFaceDescriptors();
 
   console.log("D1:", detections1);
-  console.log("~~~~~~~~~~~~d2:", detections2);
+  console.log("~~d2:", detections2);
 
   if (detections2.length == 0) {
     const folderPath = './photos';
@@ -180,9 +180,7 @@ let userLogin = async (req, res) => {
 }
 
 let userRegister = async (req, res) => {
-  if (!req.body.email.endsWith('@ves.ac.in')) {
-    return res.status(401).json({ message: 'Please use your VES email ID' });
-  }
+
 
   bcrypt.genSalt(parseInt(process.env.BCRYPT_SALT_ROUNDS), (err, salt) => {
     if (err) {

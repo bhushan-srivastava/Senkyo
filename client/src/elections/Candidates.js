@@ -17,7 +17,7 @@ const Candidates = ({ election }) => {
 
 
     return (
-        <Box sx={{ textAlign: 'center' }}>
+        <Box sx={{ textAlign: 'center', px: 5 }}>
 
 
             <div style={{
@@ -25,6 +25,7 @@ const Candidates = ({ election }) => {
                 // justifyContent: 'center' 
                 marginTop: '10px',
                 // marginBottom: '10px'
+                justifyContent: 'space-evenly'
             }}>
                 {election.candidates.map((candidate, index) => (
                     <CandidateCard key={"candidate-card-" + index} candidate={candidate} isWinner={false} />

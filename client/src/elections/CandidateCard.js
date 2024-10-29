@@ -17,7 +17,7 @@ const CandidateCard = ({ candidate, isWinner }) => {
                 variant="soft"
                 orientation="horizontal"
                 // sx={{ width: 320, }}
-                sx={{ textAlign: 'left', alignItems: 'center' }}
+                sx={{ textAlign: 'left', alignItems: 'center', m: 4 }}
             >
                 <Avatar
                     // component="img"

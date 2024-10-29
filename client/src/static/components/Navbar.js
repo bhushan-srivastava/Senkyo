@@ -88,13 +88,13 @@ const Navbar = () => {
 
                     {
                       adminNavRoutes.map((route, index) =>
-                        <MenuItem>
+                        <MenuItem key={route.key}>
                           <Link
                             href={route.href}
                             underline='none'
                             color='InfoText'
                             // variant='body2'
-                            sx={{ width: '100%' }}
+                            sx={{ width: '100%' }} 
                           >
                             {route.text}
                           </Link>
@@ -121,7 +121,7 @@ const Navbar = () => {
 
                     {
                       voterNavRoutes.map((route, index) =>
-                        <MenuItem>
+                        <MenuItem key={route.key}>
                           <Link
                             href={route.href}
                             underline='none'

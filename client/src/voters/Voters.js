@@ -280,7 +280,7 @@ const Voters = () => {
 
                         rows={voterRows}
                         columns={columns}
-                        density="comfortable"
+                        // density="comfortable"
                         initialState={{
                             pagination: {
                                 paginationModel: {

@@ -158,6 +158,8 @@ TODO
 
 insertAdmin.js
 test.users.json
+Additional steps with blochchain.txt
+SyncDatabaseWithBlockchain.js
 
 client/public
 client/node_modules

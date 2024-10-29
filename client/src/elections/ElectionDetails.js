@@ -48,7 +48,7 @@ const ElectionDetails = () => {
   return (
 
     <Box sx={{ p: 2, display: "flex", flexDirection: 'column', flexWrap: 'wrap', alignItems: 'center', }}>
-      {!isEmpty(election) && <Box sx={{ p: 2, display: "flex", flexDirection: 'column', flexWrap: 'wrap', alignItems: 'center' }}>
+      {!isEmpty(election) && <Box sx={{ p: 2, px: 25, display: "flex", flexDirection: 'column', flexWrap: 'wrap', alignItems: 'center' }}>
         <Typography variant="h4">{election.title}</Typography>
         <Typography variant="body1">{election.description}</Typography>
         <Box>
@@ -64,13 +64,36 @@ const ElectionDetails = () => {
       <Typography variant="h5" mt={2}>Candidates</Typography>
       <Candidates election={election} />
 
+      {/* use this for prod */}
+      {
+        !isAdmin
+        &&
 
-      {/* {!isAdmin && <RegisterAndWithdrawCandidate election={election} />} */}
-      <RegisterAndWithdrawCandidate election={election} isAdmin={isAdmin} />
+        new Date(election.registrationStart) <= new Date()
+        &&
+        new Date(election.registrationEnd) >= new Date()
+        &&
 
+        <RegisterAndWithdrawCandidate election={election} />
+      }
 
-      {/* {!isAdmin && <Voting election={election} />} */}
-      <Voting election={election} />
+      {/* // this allows admins to see register option, only for testing purpose */}
+      {/* <RegisterAndWithdrawCandidate election={election} isAdmin={isAdmin} /> */}
+
+      {/* use this for prod */}
+      {!isAdmin
+        &&
+
+        new Date(election.votingStart) <= new Date()
+        &&
+        new Date(election.votingEnd) >= new Date()
+        &&
+
+        <Voting election={election} />
+      }
+
+      {/* // this allows admins to see voting option, only for testing purpose */}
+      {/* <Voting election={election} /> */}
 
 
       {election.status === 'Finished' && <Results election={election} />}
