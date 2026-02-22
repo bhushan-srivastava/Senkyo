@@ -1,0 +1,794 @@
+[
+  {
+    "title": "CR Election FY MCA A (Boys)",
+    "description": "Pending single-winner election for FY MCA A male candidates.",
+    "numberOfWinners": 1,
+    "courses": [
+      "FY MCA"
+    ],
+    "divisions": [
+      "A"
+    ],
+    "genders": [
+      "Male"
+    ],
+    "status": "Pending",
+    "registrationStart": {
+      "$date": "2026-03-05T00:00:00.000Z"
+    },
+    "registrationEnd": {
+      "$date": "2026-03-09T00:00:00.000Z"
+    },
+    "votingStart": {
+      "$date": "2026-03-10T00:00:00.000Z"
+    },
+    "votingEnd": {
+      "$date": "2026-03-14T00:00:00.000Z"
+    },
+    "candidates": [
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d8f"
+        },
+        "noOfVotesReceived": 0
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56dd6"
+        },
+        "noOfVotesReceived": 0
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56de6"
+        },
+        "noOfVotesReceived": 0
+      }
+    ],
+    "votersWhoHaveVoted": []
+  },
+  {
+    "title": "Student Council BE CMPN A+B",
+    "description": "Pending election with 2 winners across BE CMPN A/B.",
+    "numberOfWinners": 2,
+    "courses": [
+      "BE CMPN"
+    ],
+    "divisions": [
+      "A",
+      "B"
+    ],
+    "genders": [
+      "Male",
+      "Female"
+    ],
+    "status": "Pending",
+    "registrationStart": {
+      "$date": "2026-03-15T00:00:00.000Z"
+    },
+    "registrationEnd": {
+      "$date": "2026-03-20T00:00:00.000Z"
+    },
+    "votingStart": {
+      "$date": "2026-03-21T00:00:00.000Z"
+    },
+    "votingEnd": {
+      "$date": "2026-03-26T00:00:00.000Z"
+    },
+    "candidates": [
+      {
+        "candidateID": {
+          "$oid": "6714febfccb758b7eed56cf9"
+        },
+        "noOfVotesReceived": 0
+      },
+      {
+        "candidateID": {
+          "$oid": "6714febfccb758b7eed56cff"
+        },
+        "noOfVotesReceived": 0
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d2d"
+        },
+        "noOfVotesReceived": 0
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d36"
+        },
+        "noOfVotesReceived": 0
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d40"
+        },
+        "noOfVotesReceived": 0
+      }
+    ],
+    "votersWhoHaveVoted": []
+  },
+  {
+    "title": "SORT Election SY INFT B (Boys)",
+    "description": "Registration stage election for SY INFT B male candidates.",
+    "numberOfWinners": 1,
+    "courses": [
+      "SY INFT"
+    ],
+    "divisions": [
+      "B"
+    ],
+    "genders": [
+      "Male"
+    ],
+    "status": "Registration",
+    "registrationStart": {
+      "$date": "2026-02-19T00:00:00.000Z"
+    },
+    "registrationEnd": {
+      "$date": "2026-02-24T00:00:00.000Z"
+    },
+    "votingStart": {
+      "$date": "2026-02-25T00:00:00.000Z"
+    },
+    "votingEnd": {
+      "$date": "2026-03-02T00:00:00.000Z"
+    },
+    "candidates": [
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d95"
+        },
+        "noOfVotesReceived": 0
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56da1"
+        },
+        "noOfVotesReceived": 0
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56dd8"
+        },
+        "noOfVotesReceived": 0
+      }
+    ],
+    "votersWhoHaveVoted": []
+  },
+  {
+    "title": "Event Committee TY INFT (Girls)",
+    "description": "Registration stage with 2 winners and female-only candidates.",
+    "numberOfWinners": 2,
+    "courses": [
+      "TY INFT"
+    ],
+    "divisions": [
+      "A",
+      "B"
+    ],
+    "genders": [
+      "Female"
+    ],
+    "status": "Registration",
+    "registrationStart": {
+      "$date": "2026-02-18T00:00:00.000Z"
+    },
+    "registrationEnd": {
+      "$date": "2026-02-27T00:00:00.000Z"
+    },
+    "votingStart": {
+      "$date": "2026-02-28T00:00:00.000Z"
+    },
+    "votingEnd": {
+      "$date": "2026-03-04T00:00:00.000Z"
+    },
+    "candidates": [
+      {
+        "candidateID": {
+          "$oid": "6714febfccb758b7eed56cfd"
+        },
+        "noOfVotesReceived": 0
+      },
+      {
+        "candidateID": {
+          "$oid": "6714febfccb758b7eed56d03"
+        },
+        "noOfVotesReceived": 0
+      },
+      {
+        "candidateID": {
+          "$oid": "6714febfccb758b7eed56d0f"
+        },
+        "noOfVotesReceived": 0
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d5f"
+        },
+        "noOfVotesReceived": 0
+      }
+    ],
+    "votersWhoHaveVoted": []
+  },
+  {
+    "title": "Technical Head FY INFT B",
+    "description": "Ongoing single-winner election with votes on all candidates.",
+    "numberOfWinners": 1,
+    "courses": [
+      "FY INFT"
+    ],
+    "divisions": [
+      "B"
+    ],
+    "genders": [
+      "Male"
+    ],
+    "status": "Ongoing",
+    "registrationStart": {
+      "$date": "2026-02-10T00:00:00.000Z"
+    },
+    "registrationEnd": {
+      "$date": "2026-02-14T00:00:00.000Z"
+    },
+    "votingStart": {
+      "$date": "2026-02-15T00:00:00.000Z"
+    },
+    "votingEnd": {
+      "$date": "2026-02-28T00:00:00.000Z"
+    },
+    "candidates": [
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d1f"
+        },
+        "noOfVotesReceived": 2
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d4f"
+        },
+        "noOfVotesReceived": 3
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d7b"
+        },
+        "noOfVotesReceived": 1
+      }
+    ],
+    "votersWhoHaveVoted": [
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d1f"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d4f"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d69"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d7b"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d81"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d9d"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56db1"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56de8"
+        }
+      }
+    ]
+  },
+  {
+    "title": "General Secretary SY MCA A",
+    "description": "Ongoing election with 2 winners and mixed candidate genders.",
+    "numberOfWinners": 2,
+    "courses": [
+      "SY MCA"
+    ],
+    "divisions": [
+      "A"
+    ],
+    "genders": [
+      "Male",
+      "Female"
+    ],
+    "status": "Ongoing",
+    "registrationStart": {
+      "$date": "2026-02-09T00:00:00.000Z"
+    },
+    "registrationEnd": {
+      "$date": "2026-02-13T00:00:00.000Z"
+    },
+    "votingStart": {
+      "$date": "2026-02-14T00:00:00.000Z"
+    },
+    "votingEnd": {
+      "$date": "2026-03-01T00:00:00.000Z"
+    },
+    "candidates": [
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d17"
+        },
+        "noOfVotesReceived": 3
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d3a"
+        },
+        "noOfVotesReceived": 2
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d3c"
+        },
+        "noOfVotesReceived": 1
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d4d"
+        },
+        "noOfVotesReceived": 2
+      }
+    ],
+    "votersWhoHaveVoted": [
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d17"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d3a"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d3c"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d4d"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d53"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d9b"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56dc7"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56dfc"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56e35"
+        }
+      }
+    ]
+  },
+  {
+    "title": "Innovation Council BE INFT A",
+    "description": "Ongoing election with 3 winners and all candidates voted.",
+    "numberOfWinners": 3,
+    "courses": [
+      "BE INFT"
+    ],
+    "divisions": [
+      "A"
+    ],
+    "genders": [
+      "Male",
+      "Female"
+    ],
+    "status": "Ongoing",
+    "registrationStart": {
+      "$date": "2026-02-08T00:00:00.000Z"
+    },
+    "registrationEnd": {
+      "$date": "2026-02-12T00:00:00.000Z"
+    },
+    "votingStart": {
+      "$date": "2026-02-13T00:00:00.000Z"
+    },
+    "votingEnd": {
+      "$date": "2026-03-02T00:00:00.000Z"
+    },
+    "candidates": [
+      {
+        "candidateID": {
+          "$oid": "6714febfccb758b7eed56cf6"
+        },
+        "noOfVotesReceived": 2
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d19"
+        },
+        "noOfVotesReceived": 2
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d24"
+        },
+        "noOfVotesReceived": 1
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d26"
+        },
+        "noOfVotesReceived": 3
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56dbf"
+        },
+        "noOfVotesReceived": 1
+      }
+    ],
+    "votersWhoHaveVoted": [
+      {
+        "voterID": {
+          "$oid": "6714febfccb758b7eed56cf6"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d19"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d24"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d26"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56dbf"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56dea"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56e00"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56e02"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56e27"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56e56"
+        }
+      }
+    ]
+  },
+  {
+    "title": "Class Committee FY CMPN A+B",
+    "description": "Finished election with 2 winners.",
+    "numberOfWinners": 2,
+    "courses": [
+      "FY CMPN"
+    ],
+    "divisions": [
+      "A",
+      "B"
+    ],
+    "genders": [
+      "Male",
+      "Female"
+    ],
+    "status": "Finished",
+    "registrationStart": {
+      "$date": "2026-01-05T00:00:00.000Z"
+    },
+    "registrationEnd": {
+      "$date": "2026-01-10T00:00:00.000Z"
+    },
+    "votingStart": {
+      "$date": "2026-01-11T00:00:00.000Z"
+    },
+    "votingEnd": {
+      "$date": "2026-01-16T00:00:00.000Z"
+    },
+    "candidates": [
+      {
+        "candidateID": {
+          "$oid": "6714febfccb758b7eed56d05"
+        },
+        "noOfVotesReceived": 4
+      },
+      {
+        "candidateID": {
+          "$oid": "6714febfccb758b7eed56d11"
+        },
+        "noOfVotesReceived": 2
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d21"
+        },
+        "noOfVotesReceived": 3
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d2b"
+        },
+        "noOfVotesReceived": 1
+      }
+    ],
+    "votersWhoHaveVoted": [
+      {
+        "voterID": {
+          "$oid": "6714febfccb758b7eed56d05"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714febfccb758b7eed56d11"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d21"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d2b"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d30"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d38"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d55"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d6f"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d87"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d8d"
+        }
+      }
+    ]
+  },
+  {
+    "title": "Women Representative TY CMPN A",
+    "description": "Finished single-winner election with female-only candidates.",
+    "numberOfWinners": 1,
+    "courses": [
+      "TY CMPN"
+    ],
+    "divisions": [
+      "A"
+    ],
+    "genders": [
+      "Female"
+    ],
+    "status": "Finished",
+    "registrationStart": {
+      "$date": "2026-01-18T00:00:00.000Z"
+    },
+    "registrationEnd": {
+      "$date": "2026-01-23T00:00:00.000Z"
+    },
+    "votingStart": {
+      "$date": "2026-01-24T00:00:00.000Z"
+    },
+    "votingEnd": {
+      "$date": "2026-01-29T00:00:00.000Z"
+    },
+    "candidates": [
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d1d"
+        },
+        "noOfVotesReceived": 5
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d46"
+        },
+        "noOfVotesReceived": 2
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56db3"
+        },
+        "noOfVotesReceived": 1
+      }
+    ],
+    "votersWhoHaveVoted": [
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d1d"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d34"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d46"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56db3"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56dde"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56e0e"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56e20"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56e22"
+        }
+      }
+    ]
+  },
+  {
+    "title": "Paused Election SY INFT A",
+    "description": "Paused election for pause/resume feature testing.",
+    "numberOfWinners": 2,
+    "courses": [
+      "SY INFT"
+    ],
+    "divisions": [
+      "A"
+    ],
+    "genders": [
+      "Male",
+      "Female"
+    ],
+    "status": "Paused",
+    "registrationStart": {
+      "$date": "2026-02-07T00:00:00.000Z"
+    },
+    "registrationEnd": {
+      "$date": "2026-02-11T00:00:00.000Z"
+    },
+    "votingStart": {
+      "$date": "2026-02-12T00:00:00.000Z"
+    },
+    "votingEnd": {
+      "$date": "2026-03-03T00:00:00.000Z"
+    },
+    "candidates": [
+      {
+        "candidateID": {
+          "$oid": "6714febfccb758b7eed56d0d"
+        },
+        "noOfVotesReceived": 1
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d63"
+        },
+        "noOfVotesReceived": 1
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d73"
+        },
+        "noOfVotesReceived": 1
+      },
+      {
+        "candidateID": {
+          "$oid": "6714fec0ccb758b7eed56d7d"
+        },
+        "noOfVotesReceived": 1
+      }
+    ],
+    "votersWhoHaveVoted": [
+      {
+        "voterID": {
+          "$oid": "6714febfccb758b7eed56d0d"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d63"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d73"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d7d"
+        }
+      },
+      {
+        "voterID": {
+          "$oid": "6714fec0ccb758b7eed56d7f"
+        }
+      }
+    ]
+  }
+]

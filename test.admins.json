@@ -1,0 +1,45 @@
+[{
+  "_id": {
+    "$oid": "67153781f00864c5d40fb482"
+  },
+  "name": "Admin",
+  "email": "admin@ves.ac.in",
+  "password": "$2b$04$ajQ6C6xqAHoirZbdVqI4puWLiZlb8lkMFejUZIvUUBQPxS4hjfIbq",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2024-10-20T17:01:53.813Z"
+  },
+  "updatedAt": {
+    "$date": "2024-10-20T17:01:53.813Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67153781f00864c5d40fb483"
+  },
+  "name": "Mona Deshmukh",
+  "email": "mona.deshmukh@ves.ac.in",
+  "password": "$2b$04$AxUg5paslWmjBAmf2XyEEO9jXQ.GKzPknxvuMB05t1bafm2nFDWpW",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2024-10-20T17:01:53.813Z"
+  },
+  "updatedAt": {
+    "$date": "2024-10-20T17:01:53.813Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67153781f00864c5d40fb484"
+  },
+  "name": "SK Goel",
+  "email": "shivkumar.goel@ves.ac.in",
+  "password": "$2b$04$v2J1Kiups1SUZufVICbU/eOODbLwshik8rZ1YdSr4ZQ07sqprEg1i",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2024-10-20T17:01:53.814Z"
+  },
+  "updatedAt": {
+    "$date": "2024-10-20T17:01:53.814Z"
+  }
+}]

@@ -1,0 +1,30 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+.navbar {
+  height: 80px;
+  position: relative;
+  top: 0;
+  z-index: 999;
+}
+
+.navbar-drawer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.logo-container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.logo {
+  height: 80px;
+}
