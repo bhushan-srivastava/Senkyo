@@ -231,13 +231,13 @@ const Login = () => {
 
                             <TextField
                             label="QR Data" 
-                            name="email"
-                            type= "email"
+                            name="qrToken"
+                            type= "password"
                             value={formData.qrToken}
                             required
                             // onChange={qr ? undefined : handleChange}
                             inputProps={{
-                                readOnly: true,
+                                readOnly: 'true',
                                 style: {
                                 userSelect: "none",
                                 WebkitUserSelect: "none",
@@ -331,7 +331,7 @@ const Login = () => {
                                 )}
                             </Box>
 
-                            <Typography sx={{ textAlign: "center" }}>OR</Typography>
+                            {/* <Typography sx={{ textAlign: "center" }}>OR</Typography> */}
                             {/* {qr && <Typography sx={{ textAlign: "center" }}>OR</Typography>} */}
 
                             {/* qrcode reader */}
