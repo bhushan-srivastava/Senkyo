@@ -18,7 +18,7 @@ import { Paper, Stack, Button, Pagination, FormControl, InputLabel, Select, Menu
 import Filter, { defaultFilterState } from './Filter';
 import { message } from "antd";
 import ElectionInfoList from './ElectionInfoList';
-import { apiFetch } from "../api/fetchClient";
+import { clearAccessToken, getAccessToken } from "../auth/token";
 
 function toCsv(items) {
     return Array.isArray(items) && items.length ? items.join(",") : "";
@@ -77,7 +77,20 @@ const Elections = () => {
                 if (filters.votingStart) params.set("votingStart", filters.votingStart);
                 if (filters.votingEnd) params.set("votingEnd", filters.votingEnd);
 
-                const { data } = await apiFetch(`/api/elections?${params.toString()}`, { method: "GET" });
+                const token = getAccessToken();
+                const response = await fetch(`/api/elections?${params.toString()}`, {
+                    method: "GET",
+                    headers: token ? { Authorization: `Bearer ${token}` } : {},
+                });
+                const data = await response.json().catch(() => null);
+
+                if (!response.ok) {
+                    if (response.status === 401 || response.status === 403) {
+                        clearAccessToken();
+                    }
+                    throw new Error(data?.message || `Request failed with status ${response.status}`);
+                }
+
                 setElections(data?.elections || []);
                 setPageMeta({
                     currentPage: data?.currentPage || 1,
@@ -254,3 +267,4 @@ const Elections = () => {
 }
 
 export default Elections;
+

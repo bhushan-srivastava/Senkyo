@@ -13,13 +13,11 @@ const adminSchema = Schema({
         type: String,
         trim: true,
         unique: [true, 'Email already exists'],
-        // match: [/.+\@.+\..+/, 'Please fill a valid email address'],
         validate: [
             {
                 validator: validator.isEmail,
                 message: 'Please fill a valid email address'
             },
-
             {
                 validator: function (value) {
                     return value.endsWith('@ves.ac.in');
@@ -33,6 +31,10 @@ const adminSchema = Schema({
         type: String,
         required: [true, 'Password is required'],
         minLength: [8, 'Password must have atleast 8 characters'] // if err then change to 'minlength' (no camelCase)
+    },
+    activeTokens: {
+        type: [String],
+        default: []
     },
 
 }, { timestamps: true });

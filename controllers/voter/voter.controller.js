@@ -7,7 +7,7 @@ const getVoters = async (req, res) => {
         if (!req.auth.isAdmin) {
             return res.status(401).json({ message: "Unauthorized" })
         }
-        const voters = await Users.find().select("-password");
+        const voters = await Users.find().select("-password -activeTokens");
         res.status(200).json(voters);
     } catch (error) {
         res.status(500).json({ message: "Server error" });
@@ -61,6 +61,7 @@ const updateVoter = async (req, res) => {
         }
         const userResponse = updatedUser.toObject();
         delete userResponse.password;
+        delete userResponse.activeTokens;
         res.status(200).json(userResponse);
     } catch (error) {
         res.status(500).json({ message: 'Server error' });

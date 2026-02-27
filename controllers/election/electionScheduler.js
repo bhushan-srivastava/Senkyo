@@ -1,17 +1,20 @@
 import cron from "node-cron";
 import Elections from "../../models/election/election.model.js";
 
+function getDayBounds() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-const today = new Date();
-today.setHours(0, 0, 0, 0);
+  const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+  const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
 
-const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
-
-const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+  return { yesterday, today, tomorrow };
+}
 
 // Define a function to handle registration start
 async function startRegistration() {
   try {
+    const { today, tomorrow } = getDayBounds();
     const elections = await Elections.find({
       registrationStart: { $gte: today, $lt: tomorrow },
     });
@@ -31,6 +34,7 @@ async function startRegistration() {
 // Define a function to handle registration end
 async function endRegistration() {
   try {
+    const { yesterday, today } = getDayBounds();
     const elections = await Elections.find({
       status: "Registration",
       registrationEnd: { $gte: yesterday, $lt: today },
@@ -41,8 +45,6 @@ async function endRegistration() {
         election.status = "Pending";
         await election.save();
         console.log(`Registration ended for election: ${election.title}`);
-
-        
       })
     );
   } catch (error) {
@@ -53,6 +55,7 @@ async function endRegistration() {
 // Define a function to handle voting start
 async function startVoting() {
   try {
+    const { today, tomorrow } = getDayBounds();
     const elections = await Elections.find({
       votingStart: { $gte: today, $lt: tomorrow },
     });
@@ -62,8 +65,6 @@ async function startVoting() {
         election.status = "Ongoing";
         await election.save();
         console.log(`Voting started for election: ${election.title}`);
-
-        
       })
     );
   } catch (error) {
@@ -74,6 +75,7 @@ async function startVoting() {
 // Define a function to handle voting end
 async function endVoting() {
   try {
+    const { yesterday, today } = getDayBounds();
     const elections = await Elections.find({
       status: "Ongoing",
       votingEnd: { $gte: yesterday, $lt: today },
@@ -84,8 +86,6 @@ async function endVoting() {
         election.status = "Finished";
         await election.save();
         console.log(`Voting ended for election: ${election.title}`);
-
-        
       })
     );
   } catch (error) {
@@ -93,15 +93,14 @@ async function endVoting() {
   }
 }
 
-// // Schedule tasks using cron expressions
-// cron.schedule('0 0 * * *', startRegistration); // Everyday at 12:00 AM
-// cron.schedule('0 0 * * *', endRegistration); // Everyday at 12:00 AM
-// cron.schedule('0 0 * * *', startVoting); // Everyday at 12:00 AM
-// cron.schedule('0 0 * * *', endVoting); // Everyday at 12:00 AM
+// Schedule tasks using cron expressions
+cron.schedule('0 0 * * *', startRegistration); // Everyday at 12:00 AM
+cron.schedule('0 0 * * *', endRegistration); // Everyday at 12:00 AM
+cron.schedule('0 0 * * *', startVoting); // Everyday at 12:00 AM
+cron.schedule('0 0 * * *', endVoting); // Everyday at 12:00 AM
 
 const scheduleElections = async () => {
   console.log("please wait for scheduling elections");
-  // Await all functions
   await Promise.all([
     startRegistration(),
     endRegistration(),

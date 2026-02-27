@@ -16,7 +16,7 @@ import { message } from "antd";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import Autocomplete from '@mui/material/Autocomplete';
 import dayjs from "dayjs";
-import { apiFetch } from "../api/fetchClient";
+import { clearAccessToken, getAccessToken } from "../auth/token";
 
 const CreateEditElection = () => {
     const [formData, setFormData] = useState({
@@ -42,23 +42,28 @@ const CreateEditElection = () => {
             navigate('/elections');
         }
         else if (isAdmin && electionID) {
-            // Fetch election data based on the electionID
-            apiFetch(`/api/elections/${electionID}`, { method: "GET" })
-                .then(({ data }) => {
-                    // data.registrationStart = new Date(data.registrationStart);
-                    // data.registrationEnd = new Date(data.registrationEnd);
-                    // data.votingStart = new Date(data.votingStart);
-                    // data.votingEnd = new Date(data.votingEnd);
+            const token = getAccessToken();
+            fetch(`/api/elections/${electionID}`, {
+                method: "GET",
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
+            })
+                .then(async (response) => {
+                    const data = await response.json().catch(() => null);
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            clearAccessToken();
+                        }
+                        throw new Error(data?.message || `Request failed with status ${response.status}`);
+                    }
 
                     data.registrationStart = dayjs(data.registrationStart);
                     data.registrationEnd = dayjs(data.registrationEnd);
                     data.votingStart = dayjs(data.votingStart);
                     data.votingEnd = dayjs(data.votingEnd);
 
-                    // Update state with the fetched election data
                     setFormData(data);
                 })
-                .catch(error => {
+                .catch((error) => {
                     message.error(error.message);
                 });
         }
@@ -80,8 +85,6 @@ const CreateEditElection = () => {
         });
     };
 
-
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -101,16 +104,40 @@ const CreateEditElection = () => {
         try {
             let data;
             if (!electionID) {
-                ({ data } = await apiFetch("/api/elections", {
+                const token = getAccessToken();
+                const response = await fetch("/api/elections", {
                     method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                    },
                     body: JSON.stringify(payload),
-                }));
+                });
+                data = await response.json().catch(() => null);
+                if (!response.ok) {
+                    if (response.status === 401 || response.status === 403) {
+                        clearAccessToken();
+                    }
+                    throw new Error(data?.message || `Request failed with status ${response.status}`);
+                }
             }
             else {
-                ({ data } = await apiFetch("/api/elections/" + electionID, {
+                const token = getAccessToken();
+                const response = await fetch("/api/elections/" + electionID, {
                     method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                    },
                     body: JSON.stringify(payload),
-                }));
+                });
+                data = await response.json().catch(() => null);
+                if (!response.ok) {
+                    if (response.status === 401 || response.status === 403) {
+                        clearAccessToken();
+                    }
+                    throw new Error(data?.message || `Request failed with status ${response.status}`);
+                }
             }
             if (!electionID) {
                 message.success("Election created successfully");
@@ -132,7 +159,6 @@ const CreateEditElection = () => {
                     {electionID ? "Edit " : "Create "}Election
                 </Typography>
 
-                {/* Form */}
                 <Container component="main" maxWidth="sm">
                     <form onSubmit={handleSubmit}>
                         <Grid container spacing={3}>

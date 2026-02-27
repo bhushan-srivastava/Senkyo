@@ -5,8 +5,7 @@ import getAuth from "./authorization";
 import IconButton from '@mui/joy/IconButton';
 import Logout from "@mui/icons-material/Logout";
 import { message } from "antd"
-import { apiFetch } from "../../api/fetchClient";
-import { clearAccessToken } from "../token";
+import { clearAccessToken, getAccessToken } from "../token";
 
 const ProtectedRoute = () => {
     const [authResult, setAuthResult] = useState({});
@@ -19,8 +18,8 @@ const ProtectedRoute = () => {
         getAuth()
             .then((result) => {
                 if (mounted) {
-                    setAuthResult(result); // This line 2
-                    setIsLoading(false); // This line 1
+                    setAuthResult(result);
+                    setIsLoading(false);
                 }
             })
             .catch(() => {
@@ -37,12 +36,23 @@ const ProtectedRoute = () => {
 
     const logout = async () => {
         try {
-            await apiFetch('/api/auth/logout', {
-                method: 'POST'
+            const token = getAccessToken();
+            const response = await fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
             });
+            const data = await response.json().catch(() => null);
+
             clearAccessToken();
             setIsLoading(false);
-            message.success("Logout successful");
+
+            if (!response.ok) {
+                message.error(data?.message || 'Logout unsuccessful');
+                navigate('/');
+                return;
+            }
+
+            message.success(data?.message || "Logout successful");
             navigate('/');
         }
         catch (error) {

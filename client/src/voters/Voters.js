@@ -1,6 +1,5 @@
 import Typography from "@mui/joy/Typography/Typography";
 import { DataGrid, GridDeleteIcon, GridToolbar } from "@mui/x-data-grid";
-// import Box from '@mui/joy/Box';
 import Modal from "@mui/joy/Modal"
 import ModalDialog from '@mui/joy/ModalDialog';
 import DialogTitle from '@mui/joy/DialogTitle';
@@ -17,7 +16,7 @@ import {
 import { useState, useEffect } from "react";
 import { Navigate, useOutletContext } from 'react-router-dom';
 import { Image, message } from "antd"
-import { apiFetch } from "../api/fetchClient";
+import { clearAccessToken, getAccessToken } from "../auth/token";
 
 const Voters = () => {
     const { isAdmin } = useOutletContext();
@@ -30,11 +29,21 @@ const Voters = () => {
         action: null,
     });
 
-    //getting users
     useEffect(() => {
         if (isAdmin) {
-            apiFetch("/api/voters/", { method: "GET" })
-                .then(({ data }) => {
+            const token = getAccessToken();
+            fetch("/api/voters/", {
+                method: "GET",
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
+            })
+                .then(async (response) => {
+                    const data = await response.json().catch(() => null);
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            clearAccessToken();
+                        }
+                        throw new Error(data?.message || `Request failed with status ${response.status}`);
+                    }
                     setVoterRows(data);
                 })
                 .catch((err) => message.error(err.message || "Unable to load voters"));
@@ -42,43 +51,44 @@ const Voters = () => {
     }, [isAdmin]);
 
     function isEqual(originalRow, updatedRow) {
-        // Check if number of properties are different
         if (Object.keys(originalRow).length !== Object.keys(updatedRow).length) {
             return false;
         }
 
-        // Compare each property value
         for (const key in originalRow) {
             if (originalRow[key] !== updatedRow[key]) {
                 return false;
             }
         }
 
-        return true; // Rows are identical
+        return true;
     }
 
-    //setting the row that has changed in an array
     const handleProcessRowUpdate = async (updatedRow, originalRow) => {
         if (isEqual(originalRow, updatedRow)) {
             return originalRow
         }
-        // setShowModal(true);
-        // setModalContent({
-        //     title: "Confirm changes",
-        //     description: "The data would be changed permanently in the database",
-        //     action: () => handleSaveChanges(updatedRow),
-        // });
-
-
 
         if (isAdmin) {
             try {
                 const { _id, ...updatedData } = updatedRow;
-
-                const { data: responseData } = await apiFetch('/api/voters/' + _id, {
+                const token = getAccessToken();
+                const response = await fetch('/api/voters/' + _id, {
                     method: 'PUT',
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                    },
                     body: JSON.stringify(updatedData)
                 });
+                const responseData = await response.json().catch(() => null);
+                if (!response.ok) {
+                    if (response.status === 401 || response.status === 403) {
+                        clearAccessToken();
+                    }
+                    throw new Error(responseData?.message || `Request failed with status ${response.status}`);
+                }
+
                 message.success("Changes saved for " + responseData.name)
                 return responseData
             } catch (error) {
@@ -86,11 +96,8 @@ const Voters = () => {
                 return originalRow
             }
         }
-
-        // setShowModal(false);
     };
 
-    // handling deletion request
     const handleDeleteRow = (id) => {
         setShowModal(true);
         setModalContent({
@@ -100,11 +107,21 @@ const Voters = () => {
         });
     };
 
-    // deleting row after confirmation from modal
     const confirmDeleteRow = (id) => {
         if (isAdmin) {
-            apiFetch(`/api/voters/${id}`, { method: "DELETE" })
-                .then(() => {
+            const token = getAccessToken();
+            fetch(`/api/voters/${id}`, {
+                method: "DELETE",
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
+            })
+                .then(async (response) => {
+                    const data = await response.json().catch(() => null);
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            clearAccessToken();
+                        }
+                        throw new Error(data?.message || `Request failed with status ${response.status}`);
+                    }
                     setVoterRows((prevRows) => prevRows.filter((row) => row._id !== id));
                     message.success("Voter deleted");
                     setShowModal(false);
@@ -123,14 +140,10 @@ const Voters = () => {
         message.error(error.message || "Unable to update voter");
     };
 
-    //handling modal function call
     const handleModalAction = () => {
         if (modalContent.action) {
             modalContent.action();
         }
-        // else {
-        //     setShowModal(false);
-        // }
     };
 
 
@@ -146,9 +159,6 @@ const Voters = () => {
                 <Image width={48} height={48} src={params.value}
                     style={{ borderRadius: "100px" }} />
             ,
-            //  const buffer = Buffer.from(imageBuffer, 'binary').toString('base64');
-            // // setImageSrc(`data:image/jpeg;base64,${buffer}`);
-            // renderCell: (params) => <Avatar src={`data:image/jpeg;base64,${buffer}`} size='lg' />,
         },
         {
             field: "name",
@@ -196,8 +206,6 @@ const Voters = () => {
             width: 150,
             editable: true,
             type: "boolean",
-            // type: "singleSelect",
-            // valueOptions: ["Yes", "No"]
         },
         {
             field: "actions",
@@ -246,11 +254,7 @@ const Voters = () => {
                     </Typography>
 
                     <DataGrid
-                        sx={{
-                            // border: "none",
-                            // marginLeft: "2vw",
-                        }}
-
+                        sx={{}}
                         rows={voterRows}
                         columns={columns}
                         density="comfortable"
@@ -263,9 +267,7 @@ const Voters = () => {
                         }}
                         slots={{ toolbar: GridToolbar }}
                         pageSizeOptions={[5]}
-                        // checkboxSelection
-                        // disableRowSelectionOnClick
-                        editMode="row" /** not sure */
+                        editMode="row"
                         getRowId={(row) => row._id}
                         onProcessRowUpdateError={handleProcessRowUpdateError}
                         processRowUpdate={handleProcessRowUpdate}

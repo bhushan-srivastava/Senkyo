@@ -1,4 +1,5 @@
-const ACCESS_TOKEN_KEY = "etherballot_access_token";
+const ACCESS_TOKEN_KEY =
+  process.env.REACT_APP_ACCESS_TOKEN_KEY || "etherballot_access_token";
 
 function getAccessToken() {
   return localStorage.getItem(ACCESS_TOKEN_KEY);

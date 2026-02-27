@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Loader from "../../static/components/Loader";
 import { message } from "antd";
-import { apiFetch } from "../../api/fetchClient";
 import { setAccessToken } from "../token";
 
 const AdminLogin = () => {
@@ -28,12 +27,20 @@ const AdminLogin = () => {
     }
 
     try {
-      const { data: responseData } = await apiFetch('/api/auth/admin/login', {
+      const response = await fetch('/api/auth/admin/login', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend)
       });
+      const responseData = await response.json().catch(() => null);
 
-      if (responseData.message === 'Login successful') {
+      if (!response.ok) {
+        setIsLoading(false);
+        message.error(responseData?.message || `Request failed with status ${response.status}`, 10);
+        return;
+      }
+
+      if (responseData?.message === 'Login successful') {
         if (!responseData.token) throw new Error("Missing access token");
         setAccessToken(responseData.token);
         setIsLoading(false);
@@ -43,7 +50,7 @@ const AdminLogin = () => {
 
       else {
         setIsLoading(false);
-        message.error(responseData.message);
+        message.error(responseData?.message || "Login unsuccessful");
       }
 
     } catch (error) {

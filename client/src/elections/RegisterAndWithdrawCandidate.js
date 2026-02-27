@@ -4,7 +4,7 @@ import { Box, Stack, Typography } from "@mui/material";
 import { IconButton } from "@mui/material";
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 import PersonRemoveOutlinedIcon from '@mui/icons-material/PersonRemoveOutlined';
-import { apiFetch } from "../api/fetchClient";
+import { clearAccessToken, getAccessToken } from "../auth/token";
 
 const RegisterAndWithdrawCandidate = ({ election, user }) => {
   const [isCandidate, setIsCandidate] = useState(false);
@@ -16,14 +16,26 @@ const RegisterAndWithdrawCandidate = ({ election, user }) => {
   }, [election, user]);
 
   const handleRegistration = () => {
-    apiFetch(`/api/elections/${election._id}`, {
+    const token = getAccessToken();
+    fetch(`/api/elections/${election._id}`, {
       method: 'PATCH',
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
       body: JSON.stringify({
         action: isCandidate ? "withdraw" : "register",
       })
     })
-      .then(({ data }) => {
-        message.success(data.message);
+      .then(async (response) => {
+        const data = await response.json().catch(() => null);
+        if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            clearAccessToken();
+          }
+          throw new Error(data?.message || `Request failed with status ${response.status}`);
+        }
+        message.success(data?.message);
         setIsCandidate(!isCandidate);
       })
       .catch((error) => {
@@ -33,7 +45,6 @@ const RegisterAndWithdrawCandidate = ({ election, user }) => {
 
   return (
     <Box display="flex" justifyContent="center" alignItems="center" sx={{
-      // border: "2px solid grey",
       padding: 2,
     }}>
 

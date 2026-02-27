@@ -41,9 +41,9 @@ async function adminLogin(req, res) {
       return res.status(401).json({ message: "Incorrect email" });
     }
 
-    // if (!password) {
-    //   return res.status(400).json({ message: "Password is required" });
-    // }
+    if (typeof password !== "string" || password.trim().length === 0) {
+      return res.status(400).json({ message: "Password is required" });
+    }
 
     const isPasswordValid = await bcrypt.compare(password, admin.password);
     if (!isPasswordValid) {
@@ -56,6 +56,14 @@ async function adminLogin(req, res) {
       role: "admin",
       name: admin.name,
     });
+
+    if (!Array.isArray(admin.activeTokens)) {
+      admin.activeTokens = [];
+    }
+    if (!admin.activeTokens.includes(token)) {
+      admin.activeTokens.push(token);
+      await admin.save();
+    }
 
     return res.status(200).json({
       message: "Login successful",
@@ -145,7 +153,6 @@ async function userLogin(req, res) {
       return res.status(400).json({ message: "Face image required" });
     }
 
-    /* -------- FACE CHECK (UNCHANGED) -------- */
     faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
 
     await saveBase64ToJpg(user.imgCode, imgCode);
@@ -156,13 +163,20 @@ async function userLogin(req, res) {
       return res.status(422).json({ message: "Face verification failed" });
     }
 
-    /* -------- ISSUE ACCESS TOKEN -------- */
     const token = createToken({
       userId: user._id,
       email: user.email,
       role: "voter",
       name: user.name,
     });
+
+    if (!Array.isArray(user.activeTokens)) {
+      user.activeTokens = [];
+    }
+    if (!user.activeTokens.includes(token)) {
+      user.activeTokens.push(token);
+      await user.save();
+    }
 
     return res.status(200).json({
       message: "Login successful",
@@ -186,29 +200,24 @@ async function userLogin(req, res) {
 
 async function userRegister(req, res) {
   try {
-    const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS, 10);
-    // const password = await bcrypt.hash(req.body.password, saltRounds);
-
     await Users.create({
       name: req.body.name,
       email: req.body.email,
-      // password,
       course: req.body.course,
       division: req.body.division,
       gender: req.body.gender,
       imgCode: req.body.imgCode,
       verified: false,
+      activeTokens: [],
     });
 
-    /* -------- QR JWT CREATION -------- */
     const qrToken = jwt.sign(
       {
         email: req.body.email,
-        // purpose: "qr-login",
       },
       process.env.QR_JWT_SECRET,
       {
-        expiresIn: "365d", // long-lived for db
+        expiresIn: "365d",
       }
     );
 
@@ -228,7 +237,29 @@ async function userRegister(req, res) {
 /* ---------------- LOGOUT ---------------- */
 
 async function logout(req, res) {
-  return res.status(200).json({ message: "Logout successful" });
+  try {
+    if (!req.auth?.userId || !req.auth?.token || !req.auth?.role) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    if (req.auth.role === "admin") {
+      await Admins.findByIdAndUpdate(req.auth.userId, {
+        $pull: { activeTokens: req.auth.token },
+      });
+    } else if (req.auth.role === "voter") {
+      await Users.findByIdAndUpdate(req.auth.userId, {
+        $pull: { activeTokens: req.auth.token },
+      });
+    } else {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    return res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    return res.status(500).json({ message: "Logout unsuccessful" });
+  }
 }
 
 export { userLogin, userRegister, adminLogin, logout };
+
+

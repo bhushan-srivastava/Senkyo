@@ -12,6 +12,8 @@ authRouter.route('/admin/login').post(adminLogin)
 authRouter.route('/voter/register').post(userRegister)
 authRouter.route('/voter/login').post(userLogin)
 
-authRouter.route('/logout').get(logout).post(logout)
+authRouter.route('/logout').post(requireAuth, logout)
+
+// authRouter.route('/logout').get(logout).post(logout)
 
 export default authRouter

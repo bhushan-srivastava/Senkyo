@@ -3,13 +3,16 @@ import Admins from "../../models/admin/admin.model.js"
 
 async function loadCurrentUser(req, res, next) {
     try {
-        if (!req.auth?.userId || !req.auth?.role) {
+        if (!req.auth?.userId || !req.auth?.role || !req.auth?.token) {
             return res.status(401).json({ message: "Unauthorized" });
         }
 
         if (req.auth.role === "admin") {
             const admin = await Admins.findById(req.auth.userId).select("-password");
             if (!admin) {
+                return res.status(401).json({ message: "Unauthorized" });
+            }
+            if (!admin.activeTokens?.includes(req.auth.token)) {
                 return res.status(401).json({ message: "Unauthorized" });
             }
             req.auth.user = admin;
@@ -20,6 +23,9 @@ async function loadCurrentUser(req, res, next) {
         if (req.auth.role === "voter") {
             const voter = await Users.findById(req.auth.userId).select("-password");
             if (!voter) {
+                return res.status(401).json({ message: "Unauthorized" });
+            }
+            if (!voter.activeTokens?.includes(req.auth.token)) {
                 return res.status(401).json({ message: "Unauthorized" });
             }
             if (!voter.verified) {

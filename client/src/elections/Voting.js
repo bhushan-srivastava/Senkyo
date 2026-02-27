@@ -9,7 +9,7 @@ import Box from "@mui/joy/Box";
 import { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import { message } from "antd";
-import { apiFetch } from "../api/fetchClient";
+import { clearAccessToken, getAccessToken } from "../auth/token";
 
 const Voting = ({ election }) => {
   const [checkedValues, setCheckedValues] = useState([]);
@@ -24,15 +24,27 @@ const Voting = ({ election }) => {
   }, [election]);
 
   const handleVote = () => {
-    apiFetch(`/api/elections/${election._id}`, {
+    const token = getAccessToken();
+    fetch(`/api/elections/${election._id}`, {
       method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
       body: JSON.stringify({
         action: "vote",
         candidates: { checkedValues }
       }),
     })
-      .then(({ data }) => {
-        message.success(data.message);
+      .then(async (response) => {
+        const data = await response.json().catch(() => null);
+        if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            clearAccessToken();
+          }
+          throw new Error(data?.message || `Request failed with status ${response.status}`);
+        }
+        message.success(data?.message);
       })
       .catch((error) => {
         message.error(error.message);
@@ -57,10 +69,6 @@ const Voting = ({ election }) => {
       );
     }
   };
-
-  /* Voting module (for voters only) */
-
-  //
 
   return (
     <Box mt={5} display="flex" justifyContent="center" alignItems="center" flexDirection="column">

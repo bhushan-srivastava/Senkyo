@@ -389,11 +389,23 @@ async function voterUpdateElection(req, res) {
                     return res.status(400).json({ message: "You have already voted in this election" });
                 }
 
-                if (req.body.candidates.checkedValues.length > election.numberOfWinners) {
+                const checkedValues = req.body?.candidates?.checkedValues;
+                if (!Array.isArray(checkedValues) || checkedValues.length === 0) {
+                    return res.status(400).json({ message: "At least one candidate must be selected" });
+                }
+
+                // Security fix: duplicate candidate IDs in one ballot could inflate vote counts.
+                // We require each candidate to appear only once in a single vote request.
+                const uniqueCheckedValues = [...new Set(checkedValues.map((id) => id.toString()))];
+                if (uniqueCheckedValues.length !== checkedValues.length) {
+                    return res.status(400).json({ message: "Duplicate candidate selections are not allowed" });
+                }
+
+                if (uniqueCheckedValues.length > election.numberOfWinners) {
                     return res.status(400).json({ message: "You cannot vote for more than " + election.numberOfWinners + " candidates" })
                 }
 
-                for (const cd of req.body.candidates.checkedValues) {
+                for (const cd of uniqueCheckedValues) {
                     const candidateIndex = election.candidates.findIndex(candidate => candidate.candidateID.equals(cd));
                     if (candidateIndex === -1) {
                         return res.status(400).json({ message: "Candidate not found" });
@@ -422,3 +434,7 @@ async function voterUpdateElection(req, res) {
 }
 
 export { getAllElections, getElectionByID, createElection, adminUpdateElection, voterUpdateElection }
+
+
+
+
