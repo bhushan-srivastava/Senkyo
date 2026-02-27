@@ -164,3 +164,9 @@ client/node_modules
 client/src
 client/package*.json
 client/README.md
+
+# env files (root + client)
+.env
+.env.*
+!.env.example
+!client/.env.example

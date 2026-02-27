@@ -162,3 +162,9 @@ test.admins.json
 test.elections.json
 
 path to set
+
+# env files (root + client)
+.env
+.env.*
+!.env.example
+!client/.env.example

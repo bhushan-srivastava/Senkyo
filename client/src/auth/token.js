@@ -1,5 +1,6 @@
-const ACCESS_TOKEN_KEY =
-  process.env.REACT_APP_ACCESS_TOKEN_KEY || "etherballot_access_token";
+import { env } from "../config/env";
+
+const ACCESS_TOKEN_KEY = env.accessTokenKey;
 
 function getAccessToken() {
   return localStorage.getItem(ACCESS_TOKEN_KEY);
