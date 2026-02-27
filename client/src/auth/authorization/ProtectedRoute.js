@@ -5,7 +5,6 @@ import getAuth from "./authorization";
 import IconButton from '@mui/joy/IconButton';
 import Logout from "@mui/icons-material/Logout";
 import { message } from "antd"
-import { clearAccessToken, getAccessToken } from "../token";
 
 const ProtectedRoute = () => {
     const [authResult, setAuthResult] = useState({});
@@ -36,14 +35,12 @@ const ProtectedRoute = () => {
 
     const logout = async () => {
         try {
-            const token = getAccessToken();
             const response = await fetch('/api/auth/logout', {
                 method: 'POST',
-                headers: token ? { Authorization: `Bearer ${token}` } : {},
+                credentials: 'include',
             });
             const data = await response.json().catch(() => null);
 
-            clearAccessToken();
             setIsLoading(false);
 
             if (!response.ok) {
@@ -56,7 +53,6 @@ const ProtectedRoute = () => {
             navigate('/');
         }
         catch (error) {
-            clearAccessToken();
             setIsLoading(false);
             message.error(error.message || 'Logout unsuccessful');
             navigate('/');
@@ -70,8 +66,6 @@ const ProtectedRoute = () => {
             :
             authResult.message === "Authorized" ?
                 <>
-
-
                     <IconButton
                         onClick={logout}
                         variant='plain'

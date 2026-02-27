@@ -2,13 +2,30 @@ import jwt from "jsonwebtoken"
 import validator from 'validator'
 
 const VALID_ROLES = new Set(["admin", "voter"]);
+const ACCESS_TOKEN_COOKIE = "access_token";
+
+function getTokenFromCookieHeader(cookieHeader) {
+    if (!cookieHeader || typeof cookieHeader !== "string") return null;
+
+    const cookies = cookieHeader.split(";");
+    for (const cookiePart of cookies) {
+        const [rawName, ...rawValueParts] = cookiePart.trim().split("=");
+        if (rawName === ACCESS_TOKEN_COOKIE) {
+            const rawValue = rawValueParts.join("=");
+            return decodeURIComponent(rawValue || "").trim() || null;
+        }
+    }
+
+    return null;
+}
 
 function extractToken(req) {
     const authHeader = req.headers.authorization || req.headers.Authorization;
     if (authHeader && typeof authHeader === "string" && authHeader.startsWith("Bearer ")) {
         return authHeader.slice(7).trim();
     }
-    return null;
+
+    return getTokenFromCookieHeader(req.headers.cookie);
 }
 
 function requireAuth(req, res, next) {
@@ -19,11 +36,10 @@ function requireAuth(req, res, next) {
             throw new Error('Unauthorized')
         }
 
-        // check json web token exists & is verified
         const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
         if (!validator.isEmail(decodedToken.email) || !VALID_ROLES.has(decodedToken.role)) {
-            throw new Error('Unauthorized') // Invalid email
+            throw new Error('Unauthorized')
         }
 
         req.auth = {

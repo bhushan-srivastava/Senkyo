@@ -8,7 +8,6 @@ import RegisterAndWithdrawCandidate from "./RegisterAndWithdrawCandidate";
 import { isEmpty } from "./electionHelper";
 import Candidates from "./Candidates";
 import ElectionInfoList from "./ElectionInfoList";
-import { clearAccessToken, getAccessToken } from "../auth/token";
 
 const ElectionDetails = () => {
   const { isAdmin, user } = useOutletContext();
@@ -18,18 +17,14 @@ const ElectionDetails = () => {
   const isMobile = useMediaQuery('(max-width:1000px)');
 
   useEffect(() => {
-    const token = getAccessToken();
-    fetch(`/api/elections/${electionID}`, {
+        fetch(`/api/elections/${electionID}`, {
       method: "GET",
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: "include",
     })
       .then(async (response) => {
         const data = await response.json().catch(() => null);
         if (!response.ok) {
-          if (response.status === 401 || response.status === 403) {
-            clearAccessToken();
-          }
-          throw new Error(data?.message || `Request failed with status ${response.status}`);
+                    throw new Error(data?.message || `Request failed with status ${response.status}`);
         }
         setElection(data);
       })
@@ -60,3 +55,4 @@ const ElectionDetails = () => {
 }
 
 export default ElectionDetails;
+

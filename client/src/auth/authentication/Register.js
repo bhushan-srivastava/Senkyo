@@ -16,7 +16,6 @@ import Webcam from "react-webcam";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../static/components/Loader";
 import { message } from "antd";
-import { getAccessToken, clearAccessToken } from "../token";
 
 const Register = () => {
   const [formData, setFormData] = React.useState({
@@ -96,21 +95,17 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      const token = getAccessToken();
       const response = await fetch("/api/auth/voter/register", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify(formData),
       });
       const data = await response.json().catch(() => null);
 
       if (!response.ok) {
-        if (response.status === 401 || response.status === 403) {
-          clearAccessToken();
-        }
         throw new Error(data?.message || `Request failed with status ${response.status}`);
       }
 
@@ -420,5 +415,7 @@ const Register = () => {
 };
 
 export default Register;
+
+
 
 

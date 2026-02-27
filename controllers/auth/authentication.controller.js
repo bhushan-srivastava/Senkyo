@@ -14,8 +14,7 @@ const __filename2 = fileURLToPath(import.meta.url);
 const __dirname2 = path.dirname(__filename2);
 
 const threeDays = 3 * 24 * 60 * 60 * 1000;
-
-/* ---------------- TOKEN CREATION ---------------- */
+const ACCESS_TOKEN_COOKIE = "access_token";
 
 function createToken({ userId, email, role, name }) {
   return jwt.sign(
@@ -30,7 +29,16 @@ function createToken({ userId, email, role, name }) {
   );
 }
 
-/* ---------------- ADMIN LOGIN ---------------- */
+function getAccessCookieOptions() {
+  const isProduction = process.env.NODE_ENV === "production";
+  return {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    maxAge: threeDays,
+    path: "/",
+  };
+}
 
 async function adminLogin(req, res) {
   try {
@@ -65,9 +73,10 @@ async function adminLogin(req, res) {
       await admin.save();
     }
 
+    res.cookie(ACCESS_TOKEN_COOKIE, token, getAccessCookieOptions());
+
     return res.status(200).json({
       message: "Login successful",
-      token,
       role: "admin",
       user: {
         _id: admin._id,
@@ -80,8 +89,6 @@ async function adminLogin(req, res) {
     return res.status(500).json({ message: "Login unsuccessful" });
   }
 }
-
-/* ---------------- FACE RECOGNITION ---------------- */
 
 async function recognizeFaces(imagePath1, imagePath2) {
   const faceAPIModelsPath = path.join(__dirname2, "./face-api-models");
@@ -116,8 +123,6 @@ async function recognizeFaces(imagePath1, imagePath2) {
   deleteFolder("./photos");
   return results;
 }
-
-/* ---------------- USER LOGIN ---------------- */
 
 async function userLogin(req, res) {
   const { qrToken, imgCode } = req.body;
@@ -178,9 +183,10 @@ async function userLogin(req, res) {
       await user.save();
     }
 
+    res.cookie(ACCESS_TOKEN_COOKIE, token, getAccessCookieOptions());
+
     return res.status(200).json({
       message: "Login successful",
-      token,
       role: "voter",
       user: {
         _id: user._id,
@@ -195,8 +201,6 @@ async function userLogin(req, res) {
     });
   }
 }
-
-/* ---------------- USER REGISTER ---------------- */
 
 async function userRegister(req, res) {
   try {
@@ -234,8 +238,6 @@ async function userRegister(req, res) {
   }
 }
 
-/* ---------------- LOGOUT ---------------- */
-
 async function logout(req, res) {
   try {
     if (!req.auth?.userId || !req.auth?.token || !req.auth?.role) {
@@ -254,6 +256,13 @@ async function logout(req, res) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
+    res.clearCookie(ACCESS_TOKEN_COOKIE, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      path: "/",
+    });
+
     return res.status(200).json({ message: "Logout successful" });
   } catch (error) {
     return res.status(500).json({ message: "Logout unsuccessful" });
@@ -261,5 +270,3 @@ async function logout(req, res) {
 }
 
 export { userLogin, userRegister, adminLogin, logout };
-
-

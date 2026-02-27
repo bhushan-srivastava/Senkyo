@@ -14,8 +14,6 @@ import { useNavigate } from "react-router-dom";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import Loader from "../../static/components/Loader";
 import { message } from "antd";
-import { getAccessToken, clearAccessToken } from "../token";
-import { setAccessToken } from "../token";
 
 const Login = () => {
     //for collecting form data    
@@ -109,21 +107,17 @@ const Login = () => {
 
         setIsLoading(true);
         try {
-            const token = getAccessToken();
             const response = await fetch("/api/auth/voter/login", {
                 method: "POST",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
-                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 },
                 body: JSON.stringify(formData)
             });
             const data = await response.json().catch(() => null);
 
             if (!response.ok) {
-                if (response.status === 401 || response.status === 403) {
-                    clearAccessToken();
-                }
                 if (response.status === 422) {
                     message.error("Recognition failed. Try again!");
                     setIsLoading(false);
@@ -132,9 +126,7 @@ const Login = () => {
                 throw new Error(data?.message || `Request failed with status ${response.status}`);
             }
 
-            if (!data?.token) throw new Error("Missing access token");
-            setAccessToken(data.token);
-            setIsLoading(false);
+                        setIsLoading(false);
             navigate("/elections");
         } catch (error) {
             setIsLoading(false);
@@ -391,5 +383,7 @@ const Login = () => {
 };
 
 export default Login;
+
+
 
 

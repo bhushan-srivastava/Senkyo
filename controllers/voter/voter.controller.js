@@ -42,12 +42,12 @@ const updateVoter = async (req, res) => {
             verified
         }
 
-        if (password && !password.startsWith(process.env.SECRET || "")) {
-            const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS, 10);
-            valuesToUpdate.password = await bcrypt.hash(password, saltRounds);
-        } else if (password) {
-            valuesToUpdate.password = password;
-        }
+        // if (password && !password.startsWith(process.env.SECRET || "")) {
+        //     const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS, 10);
+        //     valuesToUpdate.password = await bcrypt.hash(password, saltRounds);
+        // } else if (password) {
+        //     valuesToUpdate.password = password;
+        // }
 
         Object.keys(valuesToUpdate).forEach((key) => {
             if (valuesToUpdate[key] === undefined) {

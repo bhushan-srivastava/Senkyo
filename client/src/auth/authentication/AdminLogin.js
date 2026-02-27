@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Loader from "../../static/components/Loader";
 import { message } from "antd";
-import { setAccessToken } from "../token";
 
 const AdminLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -29,6 +28,7 @@ const AdminLogin = () => {
     try {
       const response = await fetch('/api/auth/admin/login', {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend)
       });
@@ -40,19 +40,9 @@ const AdminLogin = () => {
         return;
       }
 
-      if (responseData?.message === 'Login successful') {
-        if (!responseData.token) throw new Error("Missing access token");
-        setAccessToken(responseData.token);
-        setIsLoading(false);
-        message.success(responseData.message);
-        navigate("/voters");
-      }
-
-      else {
-        setIsLoading(false);
-        message.error(responseData?.message || "Login unsuccessful");
-      }
-
+      setIsLoading(false);
+      message.success(responseData?.message || "Login successful");
+      navigate("/voters");
     } catch (error) {
       setIsLoading(false);
       message.error(error.message, 10);

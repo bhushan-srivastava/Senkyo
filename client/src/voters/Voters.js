@@ -16,7 +16,6 @@ import {
 import { useState, useEffect } from "react";
 import { Navigate, useOutletContext } from 'react-router-dom';
 import { Image, message } from "antd"
-import { clearAccessToken, getAccessToken } from "../auth/token";
 
 const Voters = () => {
     const { isAdmin } = useOutletContext();
@@ -31,18 +30,14 @@ const Voters = () => {
 
     useEffect(() => {
         if (isAdmin) {
-            const token = getAccessToken();
-            fetch("/api/voters/", {
+                        fetch("/api/voters/", {
                 method: "GET",
-                headers: token ? { Authorization: `Bearer ${token}` } : {},
+                credentials: "include",
             })
                 .then(async (response) => {
                     const data = await response.json().catch(() => null);
                     if (!response.ok) {
-                        if (response.status === 401 || response.status === 403) {
-                            clearAccessToken();
-                        }
-                        throw new Error(data?.message || `Request failed with status ${response.status}`);
+                                                throw new Error(data?.message || `Request failed with status ${response.status}`);
                     }
                     setVoterRows(data);
                 })
@@ -72,21 +67,17 @@ const Voters = () => {
         if (isAdmin) {
             try {
                 const { _id, ...updatedData } = updatedRow;
-                const token = getAccessToken();
-                const response = await fetch('/api/voters/' + _id, {
+                                const response = await fetch('/api/voters/' + _id, {
                     method: 'PUT',
+                    credentials: 'include',
                     headers: {
                         "Content-Type": "application/json",
-                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
                     },
                     body: JSON.stringify(updatedData)
                 });
                 const responseData = await response.json().catch(() => null);
                 if (!response.ok) {
-                    if (response.status === 401 || response.status === 403) {
-                        clearAccessToken();
-                    }
-                    throw new Error(responseData?.message || `Request failed with status ${response.status}`);
+                                        throw new Error(responseData?.message || `Request failed with status ${response.status}`);
                 }
 
                 message.success("Changes saved for " + responseData.name)
@@ -109,18 +100,14 @@ const Voters = () => {
 
     const confirmDeleteRow = (id) => {
         if (isAdmin) {
-            const token = getAccessToken();
-            fetch(`/api/voters/${id}`, {
+                        fetch(`/api/voters/${id}`, {
                 method: "DELETE",
-                headers: token ? { Authorization: `Bearer ${token}` } : {},
+                credentials: "include",
             })
                 .then(async (response) => {
                     const data = await response.json().catch(() => null);
                     if (!response.ok) {
-                        if (response.status === 401 || response.status === 403) {
-                            clearAccessToken();
-                        }
-                        throw new Error(data?.message || `Request failed with status ${response.status}`);
+                                                throw new Error(data?.message || `Request failed with status ${response.status}`);
                     }
                     setVoterRows((prevRows) => prevRows.filter((row) => row._id !== id));
                     message.success("Voter deleted");
@@ -278,3 +265,5 @@ const Voters = () => {
 };
 
 export default Voters;
+
+

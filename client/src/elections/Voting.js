@@ -9,7 +9,6 @@ import Box from "@mui/joy/Box";
 import { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import { message } from "antd";
-import { clearAccessToken, getAccessToken } from "../auth/token";
 
 const Voting = ({ election }) => {
   const [checkedValues, setCheckedValues] = useState([]);
@@ -24,12 +23,11 @@ const Voting = ({ election }) => {
   }, [election]);
 
   const handleVote = () => {
-    const token = getAccessToken();
-    fetch(`/api/elections/${election._id}`, {
+        fetch(`/api/elections/${election._id}`, {
       method: "PATCH",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify({
         action: "vote",
@@ -39,10 +37,7 @@ const Voting = ({ election }) => {
       .then(async (response) => {
         const data = await response.json().catch(() => null);
         if (!response.ok) {
-          if (response.status === 401 || response.status === 403) {
-            clearAccessToken();
-          }
-          throw new Error(data?.message || `Request failed with status ${response.status}`);
+                    throw new Error(data?.message || `Request failed with status ${response.status}`);
         }
         message.success(data?.message);
       })
@@ -143,3 +138,9 @@ const Voting = ({ election }) => {
 };
 
 export default Voting;
+
+
+
+
+
+

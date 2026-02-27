@@ -16,7 +16,6 @@ import { message } from "antd";
 import { Navigate, useNavigate, useOutletContext, useParams } from "react-router-dom";
 import Autocomplete from '@mui/material/Autocomplete';
 import dayjs from "dayjs";
-import { clearAccessToken, getAccessToken } from "../auth/token";
 
 const CreateEditElection = () => {
     const [formData, setFormData] = useState({
@@ -42,18 +41,14 @@ const CreateEditElection = () => {
             navigate('/elections');
         }
         else if (isAdmin && electionID) {
-            const token = getAccessToken();
-            fetch(`/api/elections/${electionID}`, {
+                        fetch(`/api/elections/${electionID}`, {
                 method: "GET",
-                headers: token ? { Authorization: `Bearer ${token}` } : {},
+                credentials: "include",
             })
                 .then(async (response) => {
                     const data = await response.json().catch(() => null);
                     if (!response.ok) {
-                        if (response.status === 401 || response.status === 403) {
-                            clearAccessToken();
-                        }
-                        throw new Error(data?.message || `Request failed with status ${response.status}`);
+                                                throw new Error(data?.message || `Request failed with status ${response.status}`);
                     }
 
                     data.registrationStart = dayjs(data.registrationStart);
@@ -104,39 +99,31 @@ const CreateEditElection = () => {
         try {
             let data;
             if (!electionID) {
-                const token = getAccessToken();
-                const response = await fetch("/api/elections", {
+                                const response = await fetch("/api/elections", {
                     method: "POST",
+                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
-                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
                     },
                     body: JSON.stringify(payload),
                 });
                 data = await response.json().catch(() => null);
                 if (!response.ok) {
-                    if (response.status === 401 || response.status === 403) {
-                        clearAccessToken();
-                    }
-                    throw new Error(data?.message || `Request failed with status ${response.status}`);
+                                        throw new Error(data?.message || `Request failed with status ${response.status}`);
                 }
             }
             else {
-                const token = getAccessToken();
-                const response = await fetch("/api/elections/" + electionID, {
+                                const response = await fetch("/api/elections/" + electionID, {
                     method: "PUT",
+                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
-                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
                     },
                     body: JSON.stringify(payload),
                 });
                 data = await response.json().catch(() => null);
                 if (!response.ok) {
-                    if (response.status === 401 || response.status === 403) {
-                        clearAccessToken();
-                    }
-                    throw new Error(data?.message || `Request failed with status ${response.status}`);
+                                        throw new Error(data?.message || `Request failed with status ${response.status}`);
                 }
             }
             if (!electionID) {
@@ -364,3 +351,9 @@ const CreateEditElection = () => {
 };
 
 export default CreateEditElection;
+
+
+
+
+
+
